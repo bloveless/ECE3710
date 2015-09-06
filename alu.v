@@ -25,18 +25,19 @@ module alu(
     input      [15:0] B,
     input      [15:0] OpCode,
     output reg [15:0] C,
-    output reg [4:0]  Flags
+    output reg [5:0]  Flags
     );
 	 
-	 integer CarryIn;
+	 // Initialize the ALU with no flags
+	 reg [5:0] OriginalFlags = 6'b000000;
 	 
 	 always @(A, B, OpCode)
 	 begin
 	 
-		// Save the original carry if we need to add it in later
-		CarryIn = Flags[`CARRY_FLAG];
+		// Save the original flags
+		OriginalFlags = Flags;
 		// Always reset all the flags
-		Flags[4:0] = 5'b00000;
+		Flags[5:0] = 5'b000000;
 	 
 		case(OpCode[15:12])
 		
@@ -48,7 +49,7 @@ module alu(
 					begin
 						
 						// Perform the addition with CarryIn and set the carry flag if necessary
-						{Flags[`CARRY_FLAG], C} = A + B + CarryIn;
+						{Flags[`CARRY_FLAG], C} = A + B + OriginalFlags[`CARRY_FLAG];
 						// Set if equal to zero
 						if(C == 0) Flags[`ZERO_FLAG] = 1'b1;
 						// Set the overflow
@@ -88,6 +89,17 @@ module alu(
 						C = 16'b0000000000000000;
 
 					end
+					
+					default:
+					begin
+					
+						// Set the output to zero
+						C = 0;
+						// Invalid op set FLAG_FLAG
+						Flags = 5'b000000;
+						Flags[`INVALID_OP_FLAG] = 1'b1;
+						
+					end
 				endcase
 			end
 			
@@ -96,7 +108,7 @@ module alu(
 			
 				// Add the number and the immediate with the CarryIn
 				// Sumultaniously set the carry flag if necessary
-				{Flags[`CARRY_FLAG], C} = $signed(A) + OpCode[7:0] + CarryIn;
+				{Flags[`CARRY_FLAG], C} = $signed(A) + OpCode[7:0] + OriginalFlags[`CARRY_FLAG];
 				
 			end
 			
@@ -143,20 +155,23 @@ module alu(
 					
 					end
 					
-					`EXT_ALSH:
-					begin
-					
-						C = $signed(A) <<< B;
-						// ALSH has no flags
-					
-					end
-					
 					`EXT_ASHU:
 					begin
 					
 						C = A >>> B;
 						// ALSH has no flags
 						
+					end
+					
+					default:
+					begin
+					
+						// Set the output to zero
+						C = 0;
+						// Invalid op set FLAG_FLAG
+						Flags = 6'b000000;
+						Flags[`INVALID_OP_FLAG] = 1'b1;
+					
 					end
 				endcase
 			end
@@ -181,8 +196,11 @@ module alu(
 			default:
 			begin
 			
-				// Invalid op, set all flags (this will probably need to be changed later)
-				Flags = 5'b11111;
+				// Set the output to zero
+				C = 0;
+				// Invalid op set FLAG_FLAG
+				Flags = 6'b000000;
+				Flags[`INVALID_OP_FLAG] = 1'b1;
 			
 			end
 		endcase

@@ -276,22 +276,6 @@ module alu_test;
 			$display("PASS: LSH was correct");
 		end
 		
-		// Test arithmetic left shift
-		A = 16'b1000000000000001;
-		B = 16'b0000000000000001;
-		OpCode = {`SHIFTS, 4'b0000, `EXT_ALSH, 4'b0000};
-		
-		#1;
-		
-		if(C != 16'b0000000000000010)
-		begin
-			$display("ERROR: ALSH was not correct");
-			$display("A: %b B: %b C: %b Flags: %b [CARRY, LOW, FLAG, ZERO, NEG]", A, B, C, Flags);
-		end
-		else begin
-			$display("PASS: ALSH was correct");
-		end
-		
 		// Test unsiged arithmetic left shift
 		A = 16'b10000000000000001;
 		B = 16'b00000000000000001;
@@ -299,7 +283,7 @@ module alu_test;
 		
 		#1;
 		
-		if(C != 16'b0000000000000010)
+		if(C != 16'b0000000000000000)
 		begin
 			$display("ERROR: ASHU was not correct");
 			$display("A: %b B: %b C: %b Flags: %b [CARRY, LOW, FLAG, ZERO, NEG]", A, B, C, Flags);

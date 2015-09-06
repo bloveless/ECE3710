@@ -39,7 +39,6 @@
  `define EXT_ASHUI_LEFT			4'b0010
  `define EXT_ASHUI_RIGHT		4'b0011
  `define EXT_LSH					4'b0100
- `define EXT_ALSH					4'b0110
  `define EXT_ASHU					4'b0110
  
  `define SUBI					4'b1001
@@ -53,5 +52,6 @@
  `define FLAG_FLAG			2
  `define ZERO_FLAG			3
  `define NEG_FLAG				4
+ `define INVALID_OP_FLAG	5
 
 `endif
