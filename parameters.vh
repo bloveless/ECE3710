@@ -23,11 +23,12 @@
 `define _parameters_vh
  
  // All the available operations
- `define AND_OR_XOR_ADD		4'b0000
+ `define RTYPE					4'b0000
  `define EXT_AND					4'b0001
  `define EXT_OR					4'b0010
  `define EXT_XOR					4'b0011
  `define EXT_ADD					4'b0101
+ `define EXT_CMP					4'b1011
  
  
  `define ADDI					4'b0101
@@ -48,8 +49,9 @@
 
  // Easy access to the flags
  `define CARRY_FLAG			0
- `define FLAG_FLAG			1
- `define ZERO_FLAG			2
- `define NEG_FLAG				3
+ `define LOW_FLAG				1
+ `define FLAG_FLAG			2
+ `define ZERO_FLAG			3
+ `define NEG_FLAG				4
 
 `endif

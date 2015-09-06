@@ -37,3 +37,6 @@ _ngo
 *.ptwx
 *.twr
 *.twx
+*.gise
+*.xreport
+*.projectmgr
