@@ -24,17 +24,18 @@ module alu_FSM( A, B, OpCode, CLK, RESET);
 	
 	input CLK, RESET;
 	output A, B, OpCode;
+
 	
 	wire CLK, RESET;
 	wire [15:0] A;
 	wire [15:0] B;
 	wire [15:0] OpCode;
 	
-	reg [3:0] currentOP;
+	reg [3:0] currentOp=4'b0;
 	
-	wire [15:0] A_output;
-	wire [15:0] B_output;
-	wire [15:0] OpCode_output;
+	reg [15:0] A_output;
+	reg [15:0] B_output;
+	reg [15:0] OpCode_output;
 	
 	reg [32:0] counter;
 	
@@ -43,12 +44,24 @@ module alu_FSM( A, B, OpCode, CLK, RESET);
 	assign OpCode = OpCode_output;
 	
 	// Instantiate the Unit Under Test (UUT)
-	alu uut (
+	alu ALU(
 		.A(A), 
 		.B(B), 
 		.OpCode(OpCode), 
 		.C(C), 
 		.Flags(Flags)
+	);
+	
+	wire [6:0] SevenSegment;
+	wire [3:0] Enable;
+	wire [3:0] LED;
+	
+	BCDto7Seg BCG(
+	 .Binary(C),
+	 .Clk(CLK),
+    .SevenSegment(SevenSegment),
+	 .Enable(Enable),
+	 .LEDs(LED)
 	);
 
 	       localparam EXT_ADD_NUM=4'd0,
@@ -130,18 +143,18 @@ module alu_FSM( A, B, OpCode, CLK, RESET);
 		begin
 		if(RESET == 1'b1)
 			begin
-				currentOp = 4'd0;
+				currentOp <= 4'd0;
 			end
 		else
 			begin
 			if(counter == 32'b10001111000011010001100000000)
 				begin
-					currentOp = currentOp + 1'd1;
-					counter = 32'b0;
+					currentOp <= currentOp + 1'd1;
+					counter <= 32'b0;
 				end
 			else 
 				begin
-					counter = counter+ 1'b1;
+					counter <= counter+ 1'b1;
 				end
 			end
 		end
@@ -151,8 +164,8 @@ module alu_FSM( A, B, OpCode, CLK, RESET);
 			if(RESET == 1'b1)
 			begin
 				  OpCode_output = 16'b0;
-+				  A_output = 16'b0;
-+				  B_output =16'b0;
+				  A_output = 16'b0;
+				  B_output =16'b0;
 			end
 			case(currentOp)
 				  EXT_ADD_NUM:
@@ -165,7 +178,7 @@ module alu_FSM( A, B, OpCode, CLK, RESET);
 				  EXT_OR_NUM:
 				  begin
 				  OpCode_output = EXT_OR_OP;
-				  A_output=EXT_OR_A;
+				  A_output = EXT_OR_A;
 				  B_output = EXT_OR_B;
 				  end
 				  
@@ -258,10 +271,14 @@ module alu_FSM( A, B, OpCode, CLK, RESET);
 				  OpCode_output = CMPI_OP;
 				  A_output = CMPI_A;
 				  B_output = CMPI_B;
-				  currentOp = 4'd0;
+				  
 				  end
-			
-			
+			default: 
+						begin
+							OpCode_output = 16'b0;
+							A_output = 16'b0;
+							B_output =16'b0;
+						end
 		endcase
 		
 		end
