@@ -316,6 +316,7 @@ module alu_FSM( A, B, OpCode, CLK, RESET);
 			if(counter == 32'b10001111000011010001100000000)
 				begin
 					currentOp = currentOp + 1'd1;
+					counter = 32'b0;
 				end
 			else 
 				begin
@@ -436,6 +437,7 @@ module alu_FSM( A, B, OpCode, CLK, RESET);
 				  OpCode_output = CMPI_OP;
 				  A_output = CMPI_A;
 				  B_output = CMPI_B;
+				  currentOp = 4'd0;
 				  end
 			
 			
