@@ -41,3 +41,8 @@ _ngo
 *.xise
 *.xreport
 *.projectmgr
+*.xise
+*.debug
+*.xwbt
+*.tcl
+*.xsl

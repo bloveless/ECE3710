@@ -6,7 +6,6 @@
 // Create Date:    15:22:19 09/03/2015 
 // Design Name: 
 // Module Name:    alu 
-// Project Name: 
 // Target Devices: 
 // Tool versions: 
 // Description: 
@@ -20,15 +19,20 @@
 //////////////////////////////////////////////////////////////////////////////////
 `include "parameters.vh"
 
-module alu_FSM( A, B, OpCode, CLK, RESET);
+module alu_FSM( A, B, C, OpCode, CLK, RESET, SevenSegment, Enable, LED);
 	
 	input CLK, RESET;
-	output A, B, OpCode;
+	output A, B, C, OpCode;
 
+	output wire [6:0] SevenSegment;
+	output wire [3:0] Enable;
+	output wire [3:0] LED;
+	 
 	
 	wire CLK, RESET;
 	wire [15:0] A;
 	wire [15:0] B;
+	wire [15:0] C;
 	wire [15:0] OpCode;
 	
 	reg [3:0] currentOp=4'b0;
@@ -42,6 +46,7 @@ module alu_FSM( A, B, OpCode, CLK, RESET);
 	assign A = A_output;
 	assign B = B_output;
 	assign OpCode = OpCode_output;
+
 	
 	// Instantiate the Unit Under Test (UUT)
 	alu ALU(
@@ -52,9 +57,7 @@ module alu_FSM( A, B, OpCode, CLK, RESET);
 		.Flags(Flags)
 	);
 	
-	wire [6:0] SevenSegment;
-	wire [3:0] Enable;
-	wire [3:0] LED;
+
 	
 	BCDto7Seg BCG(
 	 .Binary(C),
