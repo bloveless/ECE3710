@@ -89,6 +89,54 @@ module alu_test;
 			$display("PASS: 10 + 10 Passed");
 		end
 		
+		// Test addition edge case 1
+		A = 0;
+		B = 0;
+		OpCode = {`RTYPE, 4'b0000, `EXT_ADD, 4'b0000};
+		
+		#1;
+		
+		if((C != 0) || (Flags != 5'b01000))
+		begin
+			$display("ERROR: 0 + 0 should equal 0, and Flags should equal 0");
+			$display("A: %b B: %b C: %b Flags: %b [NEG, ZERO, FLAG, LOW, CARRY]", A, B, C, Flags);
+		end
+		else begin
+			$display("PASS: 10 + 10 Passed");
+		end
+		
+		// Test addition edge case 2
+		A = 16'b1000000000000000;
+		B = 16'b1000000000000000;
+		OpCode = {`RTYPE, 4'b0000, `EXT_ADD, 4'b0000};
+		
+		#1;
+		
+		if((C != 0) || (Flags != 5'b01101))
+		begin
+			$display("ERROR: %b + %b should equal 0, and Flags should equal 11001", A, B);
+			$display("A: %b B: %b C: %b Flags: %b [NEG, ZERO, FLAG, LOW, CARRY]", A, B, C, Flags);
+		end
+		else begin
+			$display("PASS: 10 + 10 Passed");
+		end
+		
+		// Test addition edge case 3
+		A = 16'b0100000000000000;
+		B = 16'b0100000000000000;
+		OpCode = {`RTYPE, 4'b0000, `EXT_ADD, 4'b0000};
+		
+		#1;
+		
+		if((C != 16'b1000000000000001) || (Flags != 5'b00100))
+		begin
+			$display("ERROR: %b + %b should equal 1000000000000001 (carry from previous), and Flags should equal 00100", A, B);
+			$display("A: %b B: %b C: %b Flags: %b [NEG, ZERO, FLAG, LOW, CARRY]", A, B, C, Flags);
+		end
+		else begin
+			$display("PASS: 10 + 10 Passed");
+		end
+		
 		//Test random additions
 		for(i = 0; i < numOfTests; i = i + 1)
 		begin
@@ -254,6 +302,54 @@ module alu_test;
 			$display("PASS: CMP was correct");
 		end
 		
+		// Test compare edge case 1
+		A = 16'b1000000000000000;
+		B = 16'b0000000000000000;
+		OpCode = {`RTYPE, 4'b0000, `EXT_CMP, 4'b0000};
+		
+		#1;
+		
+		if(Flags != 5'b10000)
+		begin
+			$display("ERROR: CMP was not correct");
+			$display("A: %b B: %b C: %b Flags: %b [NEG, ZERO, FLAG, LOW, CARRY]", A, B, C, Flags);
+		end
+		else begin
+			$display("PASS: CMP was correct");
+		end
+		
+		// Test compare edge case 2
+		A = 16'b0000000000000000;
+		B = 16'b1000000000000000;
+		OpCode = {`RTYPE, 4'b0000, `EXT_CMP, 4'b0000};
+		
+		#1;
+		
+		if(Flags != 5'b00010)
+		begin
+			$display("ERROR: CMP was not correct");
+			$display("A: %b B: %b C: %b Flags: %b [NEG, ZERO, FLAG, LOW, CARRY]", A, B, C, Flags);
+		end
+		else begin
+			$display("PASS: CMP was correct");
+		end
+		
+		// Test compare edge case 3
+		A = 16'b0000000000000001;
+		B = 16'b0000000000000001;
+		OpCode = {`RTYPE, 4'b0000, `EXT_CMP, 4'b0000};
+		
+		#1;
+		
+		if(Flags != 5'b01000)
+		begin
+			$display("ERROR: CMP was not correct");
+			$display("A: %b B: %b C: %b Flags: %b [NEG, ZERO, FLAG, LOW, CARRY]", A, B, C, Flags);
+		end
+		else begin
+			$display("PASS: CMP was correct");
+		end
+		
 		//Test random compares
 		for(i = 0; i < numOfTests; i = i + 1)
 		begin
@@ -389,6 +485,21 @@ module alu_test;
 			$display("PASS: ASHUI_RIGHT was correct");
 		end
 		
+		// Test arithmetic shift right edge case
+		A = 16'b0100010000000000;
+		OpCode = {`SHIFTS, 4'b0000, `EXT_ASHUI_RIGHT, 4'b0001};
+		
+		#1;
+		
+		if(C != 16'b0010001000000000)
+		begin
+			$display("ERROR: ASHUI_RIGHT was not correct");
+			$display("A: %b B: %b C: %b Flags: %b [NEG, ZERO, FLAG, LOW, CARRY]", A, B, C, Flags);
+		end
+		else begin
+			$display("PASS: ASHUI_RIGHT was correct");
+		end
+		
 		//Test random arithmetic right shifts
 		for(i = 0; i < numOfTests; i = i + 1)
 		begin
@@ -454,6 +565,21 @@ module alu_test;
 		#1;
 		
 		if(C != 16'b0000000000000001)
+		begin
+			$display("ERROR: SUBI was not correct");
+			$display("A: %b B: %b C: %b Flags: %b [NEG, ZERO, FLAG, LOW, CARRY]", A, B, C, Flags);
+		end
+		else begin
+			$display("PASS: SUBI was correct");
+		end
+		
+		// Test subtract immediate edge case
+		A = 16'b0000000000000000;
+		OpCode = {`SUBI, 4'b0000, 8'b00000001};
+		
+		#1;
+		
+		if(C != 16'b1111111111111111)
 		begin
 			$display("ERROR: SUBI was not correct");
 			$display("A: %b B: %b C: %b Flags: %b [NEG, ZERO, FLAG, LOW, CARRY]", A, B, C, Flags);
