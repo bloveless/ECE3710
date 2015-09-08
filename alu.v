@@ -25,19 +25,19 @@ module alu(
     input      [15:0] B,
     input      [15:0] OpCode,
     output reg [15:0] C,
-    output reg [5:0]  Flags
+    output reg [4:0]  Flags
     );
 	 
-	 // Initialize the ALU with no flags
-	 reg [5:0] OriginalFlags = 6'b000000;
+	 integer OriginalFlags;
 	 
 	 always @(A, B, OpCode)
 	 begin
 	 
-		// Save the original flags
+		// Save the original flags for later
 		OriginalFlags = Flags;
+		
 		// Always reset all the flags
-		Flags[5:0] = 5'b000000;
+		Flags[4:0] = 5'b00000;
 	 
 		case(OpCode[15:12])
 		
@@ -81,34 +81,23 @@ module alu(
 					
 					end
 					
-					`EXT_SUB:
-					begin
-					
-						// Save the result and generate the carry flag if necessary
-						{Flags[`CARRY_FLAG], C} = A - B;
-						// Generate the overflow flag as well
-						if( (~A[15] & ~B[15] & C[15]) | (A[15] & B[15] & ~C[15]) ) Flags[`FLAG_FLAG] = 1'b1;
-					
-					end
-					
 					`EXT_CMP:
 					begin
-					
-						if( $signed(A) < $signed(B) ) Flags[`LOW_FLAG:`CARRY_FLAG] = 2'b11;
-						else Flags[`LOW_FLAG:`CARRY_FLAG] = 2'b00;
+			
+						if( $signed(A) < $signed(B) ) Flags[`NEG_FLAG] = 1'b1;
+						else Flags[`NEG_FLAG] = 1'b0;
+						if( $unsigned(A) < $unsigned(B) ) Flags[`LOW_FLAG] = 1'b1;
+						else Flags[`LOW_FLAG] = 1'b0;
+						if( A == B ) Flags[`ZERO_FLAG] = 1'b1;
+						else Flags[`ZERO_FLAG] = 1'b0;
 						C = 16'b0000000000000000;
 
 					end
 					
 					default:
 					begin
-					
-						// Set the output to zero
-						C = 0;
-						// Invalid op set FLAG_FLAG
-						Flags = 5'b000000;
-						Flags[`INVALID_OP_FLAG] = 1'b1;
-						
+						Flags = 5'b00000;
+						C = 16'b0000000000000000;
 					end
 				endcase
 			end
@@ -168,20 +157,15 @@ module alu(
 					`EXT_ASHU:
 					begin
 					
-						C = A >>> B;
-						// ALSH has no flags
-						
-					end
+						if($signed(B) >= 0) C = $signed(A) <<< B;
+						else C = $signed(A) >>> -B;
 					
+					end
+
 					default:
 					begin
-					
-						// Set the output to zero
-						C = 0;
-						// Invalid op set FLAG_FLAG
-						Flags = 6'b000000;
-						Flags[`INVALID_OP_FLAG] = 1'b1;
-					
+						Flags = 5'b00000;
+						C = 16'b0000000000000000;
 					end
 				endcase
 			end
@@ -189,28 +173,30 @@ module alu(
 			`SUBI:
 			begin
 			
-				C = A - OpCode[7:0];
+				C = A - $signed(OpCode[7:0]);
 				// Determine if overflow occurred
-				if( (~A[15] & B[15] & C[15]) | (A[15] & ~B[15] & ~C[15]) ) Flags[`FLAG_FLAG] = 1'b1;
+				if( (~A[15] & OpCode[7] & C[15]) | (A[15] & ~OpCode[7] & ~C[15]) ) Flags[`FLAG_FLAG] = 1'b1;
 			end
 
 			`CMPI:
 			begin
 			
-				if( $signed(A) < OpCode[7:0] ) Flags[`LOW_FLAG:`CARRY_FLAG] = 2'b11;
-				else Flags[`LOW_FLAG:`CARRY_FLAG] = 2'b00;
-				C = 16'b0000000000000000;
+				if( $signed(A) < $signed(OpCode[7:0]) ) Flags[`NEG_FLAG] = 1'b1;
+						else Flags[`NEG_FLAG] = 1'b0;
+						if( $unsigned(A) < $unsigned(OpCode[7:0]) ) Flags[`LOW_FLAG] = 1'b1;
+						else Flags[`LOW_FLAG] = 1'b0;
+						if( A == OpCode[7:0] ) Flags[`ZERO_FLAG] = 1'b1;
+						else Flags[`ZERO_FLAG] = 1'b0;
+						C = 16'b0000000000000000;
 				
 			end
 			
 			default:
 			begin
 			
-				// Set the output to zero
-				C = 0;
-				// Invalid op set FLAG_FLAG
-				Flags = 6'b000000;
-				Flags[`INVALID_OP_FLAG] = 1'b1;
+				// Invalid op, set all flags (this will probably need to be changed later)
+				Flags = 5'b11111;
+				C = 16'b0000000000000000;
 			
 			end
 		endcase
