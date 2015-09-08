@@ -28,8 +28,8 @@
  `define EXT_OR					4'b0010
  `define EXT_XOR					4'b0011
  `define EXT_ADD					4'b0101
+ `define EXT_SUB              4'b1001
  `define EXT_CMP					4'b1011
- 
  
  `define ADDI					4'b0101
  
@@ -44,7 +44,6 @@
  `define SUBI					4'b1001
  
  `define CMPI					4'b1011
- 
 
  // Easy access to the flags
  `define CARRY_FLAG			0
