@@ -229,7 +229,6 @@ module alu_FSM( A, B, OpCode, CLK, RESET);
 	wire [15:0] OpCode;
 	
 	reg [3:0] currentOP;
-	reg [3:0] nextOP;
 	
 	wire [15:0] A_output;
 	wire [15:0] B_output;
@@ -337,7 +336,12 @@ module alu_FSM( A, B, OpCode, CLK, RESET);
 		
 	always @(*)
 		begin
-		nextOp= currentOp;
+			if(RESET == 1'b1)
+			begin
+				  OpCode_output = 16'b0;
++				  A_output = 16'b0;
++				  B_output =16'b0;
+			end
 			case(currentOp)
 				  EXT_ADD_NUM:
 				  begin 
