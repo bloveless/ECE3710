@@ -29,6 +29,7 @@ module alu_test;
 	reg [15:0] A;
 	reg [15:0] B;
 	reg [15:0] OpCode;
+	reg CarryIn;
 
 	// Outputs
 	wire [15:0] C;
@@ -54,6 +55,7 @@ module alu_test;
 		.A(A), 
 		.B(B), 
 		.OpCode(OpCode), 
+		.CarryIn(CarryIn),
 		.C(C), 
 		.Flags(Flags)
 	);
@@ -62,6 +64,7 @@ module alu_test;
 		// Initialize Inputs
 		A = 0;
 		B = 0;
+		CarryIn = 0;
 		OpCode = 0;
 		numOfTests = 20;
 
@@ -128,7 +131,7 @@ module alu_test;
 		
 		#1;
 		
-		if((C != 16'b1000000000000001) || (Flags != 5'b00100))
+		if((C != 16'b1000000000000000) || (Flags != 5'b00100))
 		begin
 			$display("ERROR: %b + %b should equal 1000000000000001 (carry from previous), and Flags should equal 00100", A, B);
 			$display("A: %b B: %b C: %b Flags: %b [NEG, ZERO, FLAG, LOW, CARRY]", A, B, C, Flags);
@@ -143,9 +146,8 @@ module alu_test;
 			A = $random % 65536;
 			B = $random % 65536;
 			OpCode = {`RTYPE, 4'b0000, `EXT_ADD, 4'b0000};
-			carry = Flags[`CARRY_FLAG];
 			#1;
-			if(C != (A + B + carry))
+			if(C != (A + B + CarryIn))
 			begin
 				$display("ERROR%d: %d + %d + %d should equal %d, but equals %d", i, A, B, carry, A + B + carry, C);
 			end
@@ -187,6 +189,7 @@ module alu_test;
 		A = 1;
 		B = 1;
 		OpCode = {`RTYPE, 4'b0000, `EXT_ADD, 4'b0000};
+		CarryIn = 1;
 		
 		#1;
 		
@@ -203,6 +206,7 @@ module alu_test;
 		A = 16'b0101010101010101;
 		B = 16'b1010101010101010;
 		OpCode = {`RTYPE, 4'b0000, `EXT_OR, 4'b0000};
+		CarryIn = 0;
 		
 		#1;
 		
