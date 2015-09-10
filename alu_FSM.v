@@ -132,11 +132,11 @@ module alu_FSM( A, B, C, OpCode, CLK, RESET, SevenSegment, Enable, LED);
 			  EXT_ASHU_NUM=4'd12,
 			  EXT_ASHU_OP = 16'b1000000001100000,
 			  EXT_ASHU_A = 16'b10,
-			  EXT_ASHU_B = 16'b1,
+			  EXT_ASHU_B = 16'b1111111111111111,
 			  
 			  SUBI_NUM=4'd13,
-			  SUBI_OP = 16'b1001000000000100,
-			  SUBI_A = 16'b10,
+			  SUBI_OP = 16'b1001000000000010,
+			  SUBI_A = 16'b100,
 			  SUBI_B = 16'b0,
 			  
 			  CMPI_NUM=4'd14,
