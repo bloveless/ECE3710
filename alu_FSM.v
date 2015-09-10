@@ -136,7 +136,7 @@ module alu_FSM( A, B, C, OpCode, CLK, RESET, SevenSegment, Enable, LED);
 			  
 			  SUBI_NUM=4'd13,
 			  SUBI_OP = 16'b1001000000000100,
-			  SUBI_A = 16'b100,
+			  SUBI_A = 16'b10,
 			  SUBI_B = 16'b0,
 			  
 			  CMPI_NUM=4'd14,
