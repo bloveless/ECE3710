@@ -46,3 +46,7 @@ _ngo
 *.xwbt
 *.tcl
 *.xsl
+*.drc
+*.bgn
+*.bit
+*.ut
