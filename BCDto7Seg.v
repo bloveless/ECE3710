@@ -111,6 +111,36 @@ module BCDto7Seg(
 				// S = 7'b1111011;
 				SevenSegment = 7'b0000100;
 			end
+			4'b1010:
+			begin
+				//A
+				SevenSegment = 7'b0001000;
+			end
+			4'b1011:
+			begin
+				//B
+				SevenSegment = 7'b0000000;
+			end
+			4'b1100:
+			begin
+				//C
+				SevenSegment = 7'b0110001;
+			end
+			4'b1101:
+			begin
+				//D
+				SevenSegment = 7'b0000001;
+			end
+			4'b1110:
+			begin
+				//E
+				SevenSegment = 7'b0110000;
+			end
+			4'b1111:
+			begin
+				//F
+				SevenSegment = 7'b0111000;
+			end
 			default:
 			begin // invlalid display -
 				SevenSegment = 7'b1111110;
