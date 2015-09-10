@@ -24,18 +24,14 @@ module alu(
     input      [15:0] A,
     input      [15:0] B,
     input      [15:0] OpCode,
+	 input		CarryIn,
     output reg [15:0] C,
     output reg [4:0]  Flags
     );
 	 
-	 integer OriginalFlags;
-	 
 	 always @(A, B, OpCode)
 	 begin
-	 
-		// Save the original flags for later
-		OriginalFlags = Flags;
-		
+
 		// Always reset all the flags
 		Flags[4:0] = 5'b00000;
 	 
@@ -49,7 +45,7 @@ module alu(
 					begin
 						
 						// Perform the addition with CarryIn and set the carry flag if necessary
-						{Flags[`CARRY_FLAG], C} = A + B + OriginalFlags[`CARRY_FLAG];
+						{Flags[`CARRY_FLAG], C} = A + B + CarryIn;
 						// Set if equal to zero
 						if(C == 0) Flags[`ZERO_FLAG] = 1'b1;
 						// Set the overflow
@@ -107,7 +103,7 @@ module alu(
 			
 				// Add the number and the immediate with the CarryIn
 				// Sumultaniously set the carry flag if necessary
-				{Flags[`CARRY_FLAG], C} = $signed(A) + OpCode[7:0] + OriginalFlags[`CARRY_FLAG];
+				{Flags[`CARRY_FLAG], C} = $signed(A) + OpCode[7:0] + CarryIn;
 				
 			end
 			
