@@ -28,7 +28,7 @@ module BCDto7Seg(
 	 
 	 integer clkCount = 0;
 	 integer onesOrTens = 0;
-	 integer curDigit = 0;
+	 reg [3:0] curDigit =4'b0;
 	 
 	 always @(posedge Clk)
 	 begin
@@ -46,13 +46,13 @@ module BCDto7Seg(
 		
 		if(onesOrTens == 0)
 		begin
-			curDigit = Binary % 10;
+			curDigit = Binary[3:0];
 			// turn on the first 7 segment
 			Enable = 4'b1110;
 		end
 		else
 		begin
-			curDigit = Binary / 10;
+			curDigit = Binary[7:4];
 			// turn on the second 7 segment
 			Enable = 4'b1101;
 		end

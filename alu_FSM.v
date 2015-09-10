@@ -88,9 +88,9 @@ module alu_FSM( A, B, C, OpCode, CLK, RESET, SevenSegment, Enable, LED);
 			  EXT_AND_B = 16'b10,
 			  
 			  EXT_SUB_NUM=4'd4,
-			  EXT_SUB_OP = 16'b10010000,
-			  EXT_SUB_A = 16'b100,
-			  EXT_SUB_B = 16'b10,
+			  EXT_SUB_OP = 16'b0000000010010000,
+			  EXT_SUB_A = 16'd4,
+			  EXT_SUB_B = 16'd1,
 			  
 			  EXT_CMP_NUM=4'd5,
 			  EXT_CMP_OP = 16'b10110000,
