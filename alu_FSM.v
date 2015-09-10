@@ -36,6 +36,7 @@ module alu_FSM( A, B, C, OpCode, CLK, RESET, SevenSegment, Enable, LED);
 	wire [15:0] OpCode;
 	
 	reg [3:0] currentOp=4'b0;
+	reg CarryIn = 1'b0;
 	
 	reg [15:0] A_output;
 	reg [15:0] B_output;
@@ -53,6 +54,7 @@ module alu_FSM( A, B, C, OpCode, CLK, RESET, SevenSegment, Enable, LED);
 		.A(A), 
 		.B(B), 
 		.OpCode(OpCode), 
+		.CarryIn(CarryIn),
 		.C(C), 
 		.Flags(Flags)
 	);
