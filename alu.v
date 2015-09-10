@@ -77,6 +77,16 @@ module alu(
 					
 					end
 					
+					`EXT_SUB:
++					begin
++					
++						// Save the result and generate the carry flag if necessary
++						{Flags[`CARRY_FLAG], C} = A - B;
++						// Generate the overflow flag as well
++						if( (~A[15] & ~B[15] & C[15]) | (A[15] & B[15] & ~C[15]) ) Flags[`FLAG_FLAG] = 1'b1;
++					
++					end
+					
 					`EXT_CMP:
 					begin
 			
