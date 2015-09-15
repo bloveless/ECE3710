@@ -19,7 +19,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 module BCDto7Seg(
-    input [7:0] Binary,
+    input [15:0] Binary,
 	 input Clk,
     output reg [6:0] SevenSegment,
 	 output reg [3:0] Enable,
@@ -39,6 +39,8 @@ module BCDto7Seg(
 		if(clkCount >= 50000)
 		begin
 			if(onesOrTens == 0) onesOrTens = 1;
+			else if(onesOrTens == 1) onesOrTens = 2;
+			else if(onesOrTens == 2) onesOrTens = 3;
 			else onesOrTens = 0;
 			// Reset the clock count
 			clkCount = 0;
@@ -50,11 +52,26 @@ module BCDto7Seg(
 			// turn on the first 7 segment
 			Enable = 4'b1110;
 		end
-		else
+		
+		else if(onesOrTens == 1)
 		begin
 			curDigit = Binary[7:4];
 			// turn on the second 7 segment
 			Enable = 4'b1101;
+		end
+		
+		else if(onesOrTens == 2)
+		begin
+			curDigit = Binary[11:8];
+			// turn on the second 7 segment
+			Enable = 4'b1011;
+		end
+		
+		else
+		begin
+			curDigit = Binary[15:12];
+			// turn on the second 7 segment
+			Enable = 4'b0111;
 		end
 	 
 		// turn on the leds to match the switches (debugging)
