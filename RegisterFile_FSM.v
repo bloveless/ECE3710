@@ -23,6 +23,7 @@
 module RegisterFile_FSM(Clk, RESET, SevenSegment, Enable, LED);
 
 	reg [32:0] counter;
+	reg [32:0] operation;
 	input RESET;
 	input Clk;
 
@@ -75,12 +76,14 @@ module RegisterFile_FSM(Clk, RESET, SevenSegment, Enable, LED);
 		if(RESET == 1'b1)
 			begin
 				counter <= 4'd0;
+				operation <= 4'd0;
 			end
 		else
 			begin
 			if(counter == 32'b10001111000011010001100000000)
 				begin
 					counter <= 32'b0;
+					operation <= operation + 1'b1;
 				end
 			else 
 				begin
@@ -104,7 +107,7 @@ module RegisterFile_FSM(Clk, RESET, SevenSegment, Enable, LED);
 		
 		CarryIn = 1'b0;
 
-		case(counter)
+		case(operation)
 			0:
 			begin
 				// put 1 into reg 0
@@ -264,6 +267,19 @@ module RegisterFile_FSM(Clk, RESET, SevenSegment, Enable, LED);
 				Reg_Write = 4'd15;
 				Write_Enable = 1;
 				OpCode = {`RTYPE, 4'b0000, `EXT_ADD, 4'b0000};
+			end
+			default:
+			begin
+				// Add Reg13 + Reg14 into Reg15
+				Reset = 1'b0;
+				Reg_Read_A = 4'd0;
+				Reg_Read_B = 4'd0;
+				Reg_Write = 4'd0;
+				Write_Enable = 0;
+				OpCode = {`RTYPE, 4'b0000, `EXT_ADD, 4'b0000};
+				
+				// restart the operation
+				operation = 0;
 			end
 		endcase
 	end
