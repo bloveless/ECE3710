@@ -182,73 +182,73 @@ module RegisterFile(
 		//Output mux to A input of ALU.
 		case(Reg_Read_A)
 			4'b0000:
-				Reg_A = Reg_0_Out;
+				Reg_A <= Reg_0_Out;
 			4'b0001:
-				Reg_A = Reg_1_Out;
+				Reg_A <= Reg_1_Out;
 			4'b0010:
-				Reg_A = Reg_2_Out;
+				Reg_A <= Reg_2_Out;
 			4'b0011:
-				Reg_A = Reg_3_Out;
+				Reg_A <= Reg_3_Out;
 			4'b0100:
-				Reg_A = Reg_4_Out;
+				Reg_A <= Reg_4_Out;
 			4'b0101:
-				Reg_A = Reg_5_Out;
+				Reg_A <= Reg_5_Out;
 			4'b0110:
-				Reg_A = Reg_6_Out;
+				Reg_A <= Reg_6_Out;
 			4'b0111:
-				Reg_A = Reg_7_Out;
+				Reg_A <= Reg_7_Out;
 			4'b1000:
-				Reg_A = Reg_8_Out;
+				Reg_A <= Reg_8_Out;
 			4'b1001:
-				Reg_A = Reg_9_Out;
+				Reg_A <= Reg_9_Out;
 			4'b1010:
-				Reg_A = Reg_10_Out;
+				Reg_A <= Reg_10_Out;
 			4'b1011:
-				Reg_A = Reg_11_Out;
+				Reg_A <= Reg_11_Out;
 			4'b1100:
-				Reg_A = Reg_12_Out;
+				Reg_A <= Reg_12_Out;
 			4'b1101:
-				Reg_A = Reg_13_Out;
+				Reg_A <= Reg_13_Out;
 			4'b1110:
-				Reg_A = Reg_14_Out;
+				Reg_A <= Reg_14_Out;
 			4'b1111:
-				Reg_A = Reg_15_Out;
+				Reg_A <= Reg_15_Out;
 		endcase
 		
 		//Output mux to B input of ALU.
 		case(Reg_Read_B)
 			4'b0000:
-				Reg_B = Reg_0_Out;
+				Reg_B <= Reg_0_Out;
 			4'b0001:
-				Reg_B = Reg_1_Out;
+				Reg_B <= Reg_1_Out;
 			4'b0010:
-				Reg_B = Reg_2_Out;
+				Reg_B <= Reg_2_Out;
 			4'b0011:
-				Reg_B = Reg_3_Out;
+				Reg_B <= Reg_3_Out;
 			4'b0100:
-				Reg_B = Reg_4_Out;
+				Reg_B<= Reg_4_Out;
 			4'b0101:
-				Reg_B = Reg_5_Out;
+				Reg_B <= Reg_5_Out;
 			4'b0110:
-				Reg_B = Reg_6_Out;
+				Reg_B <= Reg_6_Out;
 			4'b0111:
-				Reg_B = Reg_7_Out;
+				Reg_B <= Reg_7_Out;
 			4'b1000:
-				Reg_B = Reg_8_Out;
+				Reg_B <= Reg_8_Out;
 			4'b1001:
-				Reg_B = Reg_9_Out;
+				Reg_B <= Reg_9_Out;
 			4'b1010:
-				Reg_B = Reg_10_Out;
+				Reg_B <= Reg_10_Out;
 			4'b1011:
-				Reg_B = Reg_11_Out;
+				Reg_B <= Reg_11_Out;
 			4'b1100:
-				Reg_B = Reg_12_Out;
+				Reg_B <=Reg_12_Out;
 			4'b1101:
-				Reg_B = Reg_13_Out;
+				Reg_B <=Reg_13_Out;
 			4'b1110:
-				Reg_B = Reg_14_Out;
+				Reg_B <= Reg_14_Out;
 			4'b1111:
-				Reg_B = Reg_15_Out;
+				Reg_B <=Reg_15_Out;
 		endcase
 	end
 endmodule

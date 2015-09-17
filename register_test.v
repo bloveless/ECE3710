@@ -13,11 +13,11 @@ module registerFSM_test;
 //ALU STUFF
 	 reg [15:0] OpCode;
 	 reg CarryIn = 1'b0;
-	 reg [15:0] C;
+	 wire [15:0] C;
 	 
 //Output registers from Register, input to ALU
-    reg [15:0] Reg_A;
-    reg [15:0] Reg_B;
+    wire [15:0] Reg_A;
+    wire [15:0] Reg_B;
 	 
 	 reg [4:0] flags;
 //initialize initial register counter to 0
@@ -32,7 +32,8 @@ RegisterFile uut (
 		.Reset(Reset), 
 		.Reg_A(Reg_A),
 		.Reg_B(Reg_B),
-		.Clk(clk)
+		.Clk(clk),
+		.ALU_Input(C)
 	);
 alu ALU(
 		.A(Reg_A), 
@@ -50,8 +51,19 @@ parameter alu_ADD_Code = 16'b1010000;
 parameter alu_immediate_One= 16'b101000000000001;
 
 initial begin
+	
+	flags=5'b0;
+	clk = 1;
+	Reset = 1'b1;
+	Write_Enable = 1'b0;
+	Reg_Read_A= 4'b0;
+	Reg_Read_B= 4'b0;
+	Reg_Write = 4'b0;
+	OpCode = 15'b0;
+	CarryIn = 1'b0;
 #100
-
+	Reset = 1'b0;
+#100
 	//put 1 in the original register 1 
 	Reg_Read_A = 4'b0000;
 	//We want to write to the same registers
@@ -59,11 +71,13 @@ initial begin
 	Write_Enable=1'b1;
 	//add immediate 1 to the value 0
 	OpCode = alu_immediate_One;
-	if((C != 1))
+	if((C == 1))
 		begin
-			$display("ERROR: 0 + 1 should equal 1");
+		$display("Correct, The value of C: %b, Register 1 value is: %b, Register 2 value is: %b", C, Reg_Read_A, Reg_Read_B);		end
+	else 
+		begin
+		$display("ERROR: 0 + 1 should equal 1");
 		end
-	else $display("Correct: 1");
 #2
 	//Do the same for register 2
 	Reg_Read_B = 4'b0001;
@@ -72,11 +86,12 @@ initial begin
 	Reg_Write = 4'b0001;
  	//add immediate 1 to the value 0
 	OpCode = alu_immediate_One;
-	if((C != 1))
+	if((C == 1))
 		begin
-			$display("ERROR: 0 + 1 should equal 1");
+			$display("Correct, The value of C: %b, Register 1 value is: %b, Register 2 value is: %b", C, Reg_A, Reg_B);
+			
 		end
-	else $display("Correct: 1");
+	else $display("ERROR: 0 + 1 should equal 1");
 	#2
 	//Now we want to add Registers 0 and registers 1
 	Reg_Read_A = 4'b0000;
@@ -87,11 +102,12 @@ initial begin
 	//this should be 2
 	Write_Enable=1'b1;
 	Reg_Write = 4'd2;
-	if((C != 2))
+	if((C == 2))
 		begin
-			$display("ERROR: 1 + 1 should equal 2");
+			$display("Correct, The value of C: %b, Register 1 value is: %b, Register 2 value is: %b", C, Reg_A, Reg_B);
+			
 		end
-	else $display("Correct: 2");
+	else $display("ERROR: 1 + 1 should equal 2");
 	
 #2
 	//Now we want to add Registers 1 and registers 2
@@ -102,12 +118,13 @@ initial begin
 	//this should be 3
 	Write_Enable=1'b1;
 	Reg_Write = 4'd3;
-	if((C != 3))
+	if((C == 3))
 		begin
-			$display("ERROR: 2 + 1 should equal 3");
+		$display("Correct, The value of C: %b, Register 1 value is: %b, Register 2 value is: %b", C, Reg_A, Reg_B);
+			
 		end
-	else $display("Correct: 3");
-	#2
+	else $display("ERROR: 2 + 1 should equal 3");
+#2
 	//Now we want to add Registers 2 and registers 3
 	Reg_Read_A = 4'd2; //this is 2
 	Reg_Read_B = 4'd3; //this is 3
@@ -116,11 +133,12 @@ initial begin
 	//this should be 5
 	Write_Enable=1'b1;
 	Reg_Write = 4'd4;
-	if((C != 5))
+	if((C == 5))
 		begin
-			$display("ERROR: 3 + 2 should equal 5");
+		$display("Correct, The value of C: %b, Register 1 value is: %b, Register 2 value is: %b", C, Reg_A, Reg_B);
+			
 		end
-	else $display("Correct: 5");
+	else $display("ERROR: 3 + 2 should equal 5");
 		
 	//Now we want to add Registers 3 and registers 4
 	Reg_Read_A = 4'd3; //this is 3
@@ -130,12 +148,13 @@ initial begin
 	//this should be 8
 	Write_Enable=1'b1;
 	Reg_Write = 4'd5;
-	if((C != 8))
+	if((C == 8))
 		begin
-			$display("ERROR: 5 + 3 should equal 8");
+		$display("Correct, The value of C: %b, Register 1 value is: %b, Register 2 value is: %b", C, Reg_A, Reg_B);
+			
 		end
-	else $display("Correct: 8");
-	#2
+	else $display("ERROR: 5 + 3 should equal 8");
+#2
 	//Now we want to add Registers 4 and registers 5
 	Reg_Read_A = 4'd4; //this is 4
 	Reg_Read_B = 4'd5; //this is 5
@@ -144,12 +163,13 @@ initial begin
 	//this should be 13
 	Write_Enable=1'b1;
 	Reg_Write = 4'd6;
-	if((C != 13))
+	if((C == 13))
 		begin
-			$display("ERROR: 8 + 5 should equal 13");
+		$display("Correct, The value of C: %b, Register 1 value is: %b, Register 2 value is: %b", C, Reg_A, Reg_B);
+			
 		end
-	else $display("Correct: 13");
-	#2
+	else $display("ERROR: 8 + 5 should equal 13");
+#2
 		//Now we want to add Registers 5 and registers 6
 	Reg_Read_A = 4'd5; //this is 5
 	Reg_Read_B = 4'd6; //this is 6
@@ -158,13 +178,14 @@ initial begin
 	//this should be 21
 	Write_Enable=1'b1;
 	Reg_Write = 4'd7;
-	if((C != 21))
+	if((C == 21))
 		begin
-			$display("ERROR: 13 + 8 should equal 21");
+		$display("Correct, The value of C: %b, Register 1 value is: %b, Register 2 value is: %b", C, Reg_A, Reg_B);
+			
 		end
-	else $display("Correct: 21");
+	else $display("ERROR: 8 + 13 should equal 21");
 	
-	#2
+#2
 		//Now we want to add Registers 6 and registers 7
 	Reg_Read_A = 4'd6; //this is 6
 	Reg_Read_B = 4'd7; //this is 7
@@ -173,13 +194,14 @@ initial begin
 	//this should be 34
 	Write_Enable=1'b1;
 	Reg_Write = 4'd8;
-	if((C != 34))
+	if((C == 34))
 		begin
-			$display("ERROR: 21 + 13 should equal 34");
+		$display("Correct, The value of C: %b, Register 1 value is: %b, Register 2 value is: %b", C, Reg_A, Reg_B);
+			
 		end
-	else $display("Correct: 34");
+	else $display("ERROR: 21 + 13 should equal 34");
 	
-	#2
+#2
 		//Now we want to add Registers 2 and registers 3
 	Reg_Read_A = 4'd7; //this is 7
 	Reg_Read_B = 4'd8; //this is 8
@@ -188,13 +210,14 @@ initial begin
 	//this should be 55
 	Write_Enable=1'b1;
 	Reg_Write = 4'd9;
-	if((C != 55))
+	if((C == 55))
 		begin
-			$display("ERROR: 34 + 21 should equal 55");
+			$display("Correct, The value of C: %b, Register 1 value is: %b, Register 2 value is: %b", C, Reg_A, Reg_B);
+			
 		end
-	else $display("Correct: 55");
+	else $display("ERROR: 34 + 21 should equal 55");
 	
-	#2
+#2
 		//Now we want to add Registers 2 and registers 3
 	Reg_Read_A = 4'd8; //this is 8
 	Reg_Read_B = 4'd9; //this is 9
@@ -203,11 +226,12 @@ initial begin
 	//this should be 89
 	Write_Enable=1'b1;
 	Reg_Write = 4'd10;
-	if((C != 89))
+	if((C == 89))
 		begin
-			$display("ERROR: 55 + 34 should equal 89");
+		$display("Correct, The value of C: %b, Register 1 value is: %b, Register 2 value is: %b", C, Reg_A, Reg_B);
+			
 		end
-	else $display("Correct: 89");
+	else $display("ERROR: 55 + 34 should equal 89");
 	
 		//Now we want to add Registers 2 and registers 3
 	Reg_Read_A = 4'd9; //this is 9
@@ -217,13 +241,14 @@ initial begin
 	//this should be 144
 	Write_Enable=1'b1;
 	Reg_Write = 4'd11;
-	if((C != 144))
+	if((C == 144))
 		begin
-			$display("ERROR: 89 + 55 should equal 144");
+			$display("Correct, The value of C: %b, Register 1 value is: %b, Register 2 value is: %b", C, Reg_A, Reg_B);
+			
 		end
-	else $display("Correct: 144");
+	else $display("ERROR: 89 + 55 should equal 144");
 	
-	#2
+#2
 		//Now we want to add Registers 2 and registers 3
 	Reg_Read_A = 4'd10; //this is 10
 	Reg_Read_B = 4'd11; //this is 11
@@ -232,12 +257,13 @@ initial begin
 	//this should be 233
 	Write_Enable=1'b1;
 	Reg_Write = 4'd12;
-	if((C != 233))
+	if((C == 233))
 		begin
-			$display("ERROR: 144 + 89 should equal 233");
+		$display("Correct, The value of C: %b, Register 1 value is: %b, Register 2 value is: %b", C, Reg_A, Reg_B);
+			
 		end
-	else $display("Correct: 233");
-	#2
+	else $display("ERROR: 144 + 89 should equal 233");
+#2
 	//Now we want to add Registers 2 and registers 3
 	Reg_Read_A = 4'd11; //this is 11
 	Reg_Read_B = 4'd12; //this is 12
@@ -246,13 +272,14 @@ initial begin
 	//this should be 377
 	Write_Enable=1'b1;
 	Reg_Write = 4'd13;
-	if((C != 377))
+	if((C == 377))
 		begin
-			$display("ERROR: 233 + 144 should equal 377");
+		$display("Correct, The value of C: %b, Register 1 value is: %b, Register 2 value is: %b", C, Reg_A, Reg_B);
+			
 		end
-	else $display("Correct: 377");
+	else $display("ERROR: 233 + 144 should equal 377");
 	
-	#2
+#2
 	//Now we want to add Registers 2 and registers 3
 	Reg_Read_A = 4'd12; //this is 12
 	Reg_Read_B = 4'd13; //this is 13
@@ -261,12 +288,13 @@ initial begin
 	//this should be 610
 	Write_Enable=1'b1;
 	Reg_Write = 4'd14;
-	if((C != 610))
+	if((C == 610))
 		begin
-			$display("ERROR: 377 + 233 should equal 610");
+		$display("Correct, The value of C: %b, Register 1 value is: %b, Register 2 value is: %b", C, Reg_A, Reg_B);
+			
 		end
-	else $display("Correct: 610");
-	#2
+	else $display("ERROR: 377 + 233 should equal 610");
+#2
 	//Now we want to add Registers 2 and registers 3
 	Reg_Read_A = 4'd13; //this is 13
 	Reg_Read_B = 4'd14; //this is 14
@@ -275,21 +303,20 @@ initial begin
 	//this should be 987
 	Write_Enable=1'b1;
 	Reg_Write = 4'd15;
-	if((C != 987))
+	if((C == 987))
 		begin
-			$display("ERROR: 377 + 610 should equal 987");
+		$display("Correct, The value of C: %b, Register 1 value is: %b, Register 2 value is: %b", C, Reg_A, Reg_B);
+			
 		end
-	else $display("Correct: 987");
+	else $display("ERROR: 377 + 610 should equal 987");
 	
 	
 end
 
-initial 
-	begin 
-	clk = 1;
-	Reset = 1'b0;
-	Write_Enable = 1'b0;
-	end
+//initial 
+	//begin 
+//
+	//end
 
 always #1 clk = !clk;
 
