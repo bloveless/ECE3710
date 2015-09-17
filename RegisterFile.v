@@ -52,7 +52,7 @@ module RegisterFile(
 	 Register reg0(
 		.Reg_In(ALU_Input), 
 		.Clk(Clk),
-		.Enable(Write_Enable && (Reg_Write == 4'b0000)),
+		.Write_Enable(Write_Enable && (Reg_Write == 4'b0000)),
 		.Reset(Reset),
 		.Reg_Out(Reg_0_Out)
 	);
@@ -60,7 +60,7 @@ module RegisterFile(
 	Register reg1(
 		.Reg_In(ALU_Input), 
 		.Clk(Clk),
-		.Enable(Write_Enable && (Reg_Write == 4'b0001)),
+		.Write_Enable(Write_Enable && (Reg_Write == 4'b0001)),
 		.Reset(Reset),
 		.Reg_Out(Reg_1_Out)
 	);
@@ -68,7 +68,7 @@ module RegisterFile(
 	Register reg2(
 		.Reg_In(ALU_Input), 
 		.Clk(Clk),
-		.Enable(Write_Enable && (Reg_Write == 4'b0010)), 
+		.Write_Enable(Write_Enable && (Reg_Write == 4'b0010)), 
 		.Reset(Reset),
 		.Reg_Out(Reg_2_Out)
 	);
@@ -76,7 +76,7 @@ module RegisterFile(
 	Register reg3(
 		.Reg_In(ALU_Input), 
 		.Clk(Clk),
-		.Enable(Write_Enable && (Reg_Write == 4'b0011)), 
+		.Write_Enable(Write_Enable && (Reg_Write == 4'b0011)), 
 		.Reset(Reset),
 		.Reg_Out(Reg_3_Out)
 	);
@@ -84,7 +84,7 @@ module RegisterFile(
 	Register reg4(
 		.Reg_In(ALU_Input), 
 		.Clk(Clk),
-		.Enable(Write_Enable && (Reg_Write == 4'b0100)), 
+		.Write_Enable(Write_Enable && (Reg_Write == 4'b0100)), 
 		.Reset(Reset),
 		.Reg_Out(Reg_4_Out)
 	);
@@ -92,7 +92,7 @@ module RegisterFile(
 	Register reg5(
 		.Reg_In(ALU_Input), 
 		.Clk(Clk),
-		.Enable(Write_Enable && (Reg_Write == 4'b0101)), 
+		.Write_Enable(Write_Enable && (Reg_Write == 4'b0101)), 
 		.Reset(Reset),
 		.Reg_Out(Reg_5_Out)
 	);
@@ -100,7 +100,7 @@ module RegisterFile(
 	Register reg6(
 		.Reg_In(ALU_Input), 
 		.Clk(Clk),
-		.Enable(Write_Enable && (Reg_Write == 4'b0110)), 
+		.Write_Enable(Write_Enable && (Reg_Write == 4'b0110)), 
 		.Reset(Reset),
 		.Reg_Out(Reg_6_Out)
 	);
@@ -108,7 +108,7 @@ module RegisterFile(
 	Register reg7(
 		.Reg_In(ALU_Input), 
 		.Clk(Clk),
-		.Enable(Write_Enable && (Reg_Write == 4'b0111)), 
+		.Write_Enable(Write_Enable && (Reg_Write == 4'b0111)), 
 		.Reset(Reset),
 		.Reg_Out(Reg_7_Out)
 	);
@@ -116,7 +116,7 @@ module RegisterFile(
 	Register reg8(
 		.Reg_In(ALU_Input), 
 		.Clk(Clk),
-		.Enable(Write_Enable && (Reg_Write == 4'b1000)), 
+		.Write_Enable(Write_Enable && (Reg_Write == 4'b1000)), 
 		.Reset(Reset),
 		.Reg_Out(Reg_8_Out)
 	);
@@ -124,7 +124,7 @@ module RegisterFile(
 	Register reg9(
 		.Reg_In(ALU_Input), 
 		.Clk(Clk),
-		.Enable(Write_Enable && (Reg_Write == 4'b1001)), 
+		.Write_Enable(Write_Enable && (Reg_Write == 4'b1001)), 
 		.Reset(Reset),
 		.Reg_Out(Reg_9_Out)
 	);
@@ -132,7 +132,7 @@ module RegisterFile(
 	Register reg10(
 		.Reg_In(ALU_Input), 
 		.Clk(Clk),
-		.Enable(Write_Enable && (Reg_Write == 4'b1010)), 
+		.Write_Enable(Write_Enable && (Reg_Write == 4'b1010)), 
 		.Reset(Reset),
 		.Reg_Out(Reg_10_Out)
 	);
@@ -140,7 +140,7 @@ module RegisterFile(
 	Register reg11(
 		.Reg_In(ALU_Input), 
 		.Clk(Clk),
-		.Enable(Write_Enable && (Reg_Write == 4'b1011)), 
+		.Write_Enable(Write_Enable && (Reg_Write == 4'b1011)), 
 		.Reset(Reset),
 		.Reg_Out(Reg_11_Out)
 	);
@@ -148,7 +148,7 @@ module RegisterFile(
 	Register reg12(
 		.Reg_In(ALU_Input), 
 		.Clk(Clk),
-		.Enable(Write_Enable && (Reg_Write == 4'b1100)), 
+		.Write_Enable(Write_Enable && (Reg_Write == 4'b1100)), 
 		.Reset(Reset),
 		.Reg_Out(Reg_12_Out)
 	);
@@ -156,7 +156,7 @@ module RegisterFile(
 	Register reg13(
 		.Reg_In(ALU_Input), 
 		.Clk(Clk),
-		.Enable(Write_Enable && (Reg_Write == 4'b1101)), 
+		.Write_Enable(Write_Enable && (Reg_Write == 4'b1101)), 
 		.Reset(Reset),
 		.Reg_Out(Reg_13_Out)
 	);
@@ -164,7 +164,7 @@ module RegisterFile(
 	Register reg14(
 		.Reg_In(ALU_Input), 
 		.Clk(Clk),
-		.Enable(Write_Enable && (Reg_Write == 4'b1110)), 
+		.Write_Enable(Write_Enable && (Reg_Write == 4'b1110)), 
 		.Reset(Reset),
 		.Reg_Out(Reg_14_Out)
 	);
@@ -172,7 +172,7 @@ module RegisterFile(
 	Register reg15(
 		.Reg_In(ALU_Input), 
 		.Clk(Clk),
-		.Enable(Write_Enable && (Reg_Write == 4'b1111)), 
+		.Write_Enable(Write_Enable && (Reg_Write == 4'b1111)), 
 		.Reset(Reset),
 		.Reg_Out(Reg_15_Out)
 	);
