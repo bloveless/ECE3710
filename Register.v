@@ -21,17 +21,18 @@
 module Register(
     input [15:0] Reg_In,
     input Clk,
-    input Enable,
+    input Write_Enable,
 	 input Reset,
 	 output reg [15:0] Reg_Out
     );
 
 	always @(posedge(Clk))
 	begin
-		if(Enable)
-			Reg_Out = Reg_In;
 		if(Reset)
-			Reg_Out = 16'b0;
+			Reg_Out <= 16'b0;
+		else if(Write_Enable)
+			Reg_Out <= Reg_In;
+		else Reg_Out <=Reg_Out;
 	end
 
 endmodule
