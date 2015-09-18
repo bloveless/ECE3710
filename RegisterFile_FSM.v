@@ -23,13 +23,16 @@
 module RegisterFile_FSM(Clk, RESET, SevenSegment, Enable, LED);
 
 	reg [32:0] counter;
-	reg [32:0] operation;
+	reg operation;
 	input RESET;
 	input Clk;
+	reg [31:0] count;
 
 	reg[3:0] Reg_Write;
 	reg [3:0] Reg_Read_A;
 	reg [3:0] Reg_Read_B;
+	wire [15:0] Reg_A;
+	wire [15:0] Reg_B;
 	reg 		Write_Enable;
 	reg 		Reset;
 	
@@ -51,12 +54,12 @@ module RegisterFile_FSM(Clk, RESET, SevenSegment, Enable, LED);
 		.ALU_Input(C),
 		.Reg_A(Reg_A),
 		.Reg_B(Reg_B),
-		.Clk(Clk)
+		.Clk(operation)
 	);
 	
 	alu ALU (
-	   .A(Reg_Read_A),
-		.B(Reg_Read_B),
+	   .A(Reg_A),
+		.B(Reg_B),
 		.OpCode(OpCode),
 		.CarryIn(CarryIn),
 		.C(C),
@@ -70,7 +73,16 @@ module RegisterFile_FSM(Clk, RESET, SevenSegment, Enable, LED);
 		.Enable(Enable),
 		.LEDs(LED)
 	);
-
+	
+	initial
+	begin
+		operation = 0;
+		Reset = 1'b1;
+		counter = 0;
+		count = 0;
+		CarryIn = 0;
+	end
+	
 	always @(posedge Clk)
 		begin
 		if(RESET == 1'b1)
@@ -80,10 +92,10 @@ module RegisterFile_FSM(Clk, RESET, SevenSegment, Enable, LED);
 			end
 		else
 			begin
-			if(counter == 32'b10001111000011010001100000000)
+			if(counter == 32'd150000000)
 				begin
 					counter <= 32'b0;
-					operation <= operation + 1'b1;
+					operation <= !operation;
 				end
 			else 
 				begin
@@ -91,23 +103,9 @@ module RegisterFile_FSM(Clk, RESET, SevenSegment, Enable, LED);
 				end
 			end
 		end
-		
-	always @(*)
+	always @(posedge(operation))
 	begin
-		if(RESET == 1'b1)
-		begin
-			Reset = 1'b1;
-			Reg_Write = 4'b0000;
-			Reg_Read_A = 4'b0000;
-			Reg_Read_B = 4'b0000;
-			Write_Enable = 0;
-			
-			OpCode = 16'b0000000000000000;
-		end
-		
-		CarryIn = 1'b0;
-
-		case(operation)
+		case(count)
 			0:
 			begin
 				// put 1 into reg 0
@@ -122,7 +120,7 @@ module RegisterFile_FSM(Clk, RESET, SevenSegment, Enable, LED);
 			begin
 				// put 1 into reg 1
 				Reset = 1'b0;
-				Reg_Read_A = 4'd0;
+				Reg_Read_A = 4'd1;
 				Reg_Read_B = 4'd0;
 				Reg_Write = 4'd1;
 				Write_Enable = 1;
@@ -277,11 +275,9 @@ module RegisterFile_FSM(Clk, RESET, SevenSegment, Enable, LED);
 				Reg_Write = 4'd0;
 				Write_Enable = 0;
 				OpCode = {`RTYPE, 4'b0000, `EXT_ADD, 4'b0000};
-				
-				// restart the operation
-				operation = 0;
 			end
 		endcase
+		count = count + 1;
 	end
 
 endmodule
