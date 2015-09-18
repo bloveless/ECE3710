@@ -23,11 +23,10 @@
 module RegisterFile_FSM(Clk, RESET, SevenSegment, Enable, LED);
 
 	// FSM inputs/outputs
-	reg        [32:0] counter;
-	reg               operation;
+	integer       		counter;
+	integer           operation;
 	input             RESET;
 	input             Clk;
-	reg        [31:0] count;
 	// RegisterFile inputs/outputs
 	reg         [3:0] Reg_Write;
 	reg         [3:0] Reg_Read_A;
@@ -55,7 +54,7 @@ module RegisterFile_FSM(Clk, RESET, SevenSegment, Enable, LED);
 		.ALU_Input(C),
 		.Reg_A(Reg_A),
 		.Reg_B(Reg_B),
-		.Clk(operation)
+		.Clk(Clk)
 	);
 	
 	alu ALU (
@@ -78,13 +77,12 @@ module RegisterFile_FSM(Clk, RESET, SevenSegment, Enable, LED);
 	initial
 	begin
 		operation = 0;
-		Reset = 1'b1;
+		Reset = 1'b0;
 		counter = 0;
-		count = 0;
 		CarryIn = 0;
 	end
 	
-	always @(posedge Clk)
+	always @(posedge(Clk))
 	begin
 		if(RESET == 1'b1)
 		begin
@@ -93,42 +91,57 @@ module RegisterFile_FSM(Clk, RESET, SevenSegment, Enable, LED);
 		end
 		else
 		begin
+			Reset = 1'b0;
 			if(counter == 32'd150000000)
 			begin
 					counter <= 32'b0;
-					operation <= !operation;
+					if(operation == 16)
+					begin
+						operation <= 0;
+					end
+					else
+					begin
+						operation <= operation + 1;
+					end
 			end
 			else 
 			begin
 					counter <= counter+ 1'b1;
 			end
 		end
-	end
-	
-	always @(posedge(operation))
-	begin
-		case(count)
+		
+		case(operation)
 			0:
+			begin
+				// reset registers
+				Reset = 1'b1;
+				Reg_Read_A = 4'd1;
+				Reg_Read_B = 4'd1;
+				Reg_Write = 4'd0;
+				Write_Enable = 1;
+				OpCode = {`ADDI, 4'b0000, 8'b00000000};
+			end
+			1:
 			begin
 				// put 1 into reg 0
 				Reset = 1'b0;
-				Reg_Read_A = 4'd0;
-				Reg_Read_B = 4'd0;
+				Reg_Read_A = 4'd1;
+				Reg_Read_B = 4'd1;
 				Reg_Write = 4'd0;
 				Write_Enable = 1;
 				OpCode = {`ADDI, 4'b0000, 8'b00000001};
 			end
-			1:
+			2:
 			begin
 				// put 1 into reg 1
 				Reset = 1'b0;
-				Reg_Read_A = 4'd1;
+				Reg_Read_A = 4'd2;
 				Reg_Read_B = 4'd0;
 				Reg_Write = 4'd1;
 				Write_Enable = 1;
 				OpCode = {`ADDI, 4'b0000, 8'b00000001};
 			end
-			2:
+			3:
 			begin
 				// Add Reg0 + Reg1 into Reg2
 				Reset = 1'b0;
@@ -138,7 +151,7 @@ module RegisterFile_FSM(Clk, RESET, SevenSegment, Enable, LED);
 				Write_Enable = 1;
 				OpCode = {`RTYPE, 4'b0000, `EXT_ADD, 4'b0000};
 			end
-			3:
+			4:
 			begin
 				// Add Reg1 + Reg2 into Reg3
 				Reset = 1'b0;
@@ -148,7 +161,7 @@ module RegisterFile_FSM(Clk, RESET, SevenSegment, Enable, LED);
 				Write_Enable = 1;
 				OpCode = {`RTYPE, 4'b0000, `EXT_ADD, 4'b0000};
 			end
-			4:
+			5:
 			begin
 				// Add Reg2 + Reg3 into Reg4
 				Reset = 1'b0;
@@ -158,7 +171,7 @@ module RegisterFile_FSM(Clk, RESET, SevenSegment, Enable, LED);
 				Write_Enable = 1;
 				OpCode = {`RTYPE, 4'b0000, `EXT_ADD, 4'b0000};
 			end
-			5:
+			6:
 			begin
 				// Add Reg3 + Reg4 into Reg5
 				Reset = 1'b0;
@@ -168,7 +181,7 @@ module RegisterFile_FSM(Clk, RESET, SevenSegment, Enable, LED);
 				Write_Enable = 1;
 				OpCode = {`RTYPE, 4'b0000, `EXT_ADD, 4'b0000};
 			end
-			6:
+			7:
 			begin
 				// Add Reg4 + Reg5 into Reg6
 				Reset = 1'b0;
@@ -178,7 +191,7 @@ module RegisterFile_FSM(Clk, RESET, SevenSegment, Enable, LED);
 				Write_Enable = 1;
 				OpCode = {`RTYPE, 4'b0000, `EXT_ADD, 4'b0000};
 			end
-			7:
+			8:
 			begin
 				// Add Reg5 + Reg6 into Reg7
 				Reset = 1'b0;
@@ -188,7 +201,7 @@ module RegisterFile_FSM(Clk, RESET, SevenSegment, Enable, LED);
 				Write_Enable = 1;
 				OpCode = {`RTYPE, 4'b0000, `EXT_ADD, 4'b0000};
 			end
-			8:
+			9:
 			begin
 				// Add Reg6 + Reg7 into Reg8
 				Reset = 1'b0;
@@ -198,7 +211,7 @@ module RegisterFile_FSM(Clk, RESET, SevenSegment, Enable, LED);
 				Write_Enable = 1;
 				OpCode = {`RTYPE, 4'b0000, `EXT_ADD, 4'b0000};
 			end
-			9:
+			10:
 			begin
 				// Add Reg7 + Reg8 into Reg9
 				Reset = 1'b0;
@@ -208,7 +221,7 @@ module RegisterFile_FSM(Clk, RESET, SevenSegment, Enable, LED);
 				Write_Enable = 1;
 				OpCode = {`RTYPE, 4'b0000, `EXT_ADD, 4'b0000};
 			end
-			10:
+			11:
 			begin
 				// Add Reg8 + Reg9 into Reg10
 				Reset = 1'b0;
@@ -218,7 +231,7 @@ module RegisterFile_FSM(Clk, RESET, SevenSegment, Enable, LED);
 				Write_Enable = 1;
 				OpCode = {`RTYPE, 4'b0000, `EXT_ADD, 4'b0000};
 			end
-			11:
+			12:
 			begin
 				// Add Reg9 + Reg10 into Reg11
 				Reset = 1'b0;
@@ -228,7 +241,7 @@ module RegisterFile_FSM(Clk, RESET, SevenSegment, Enable, LED);
 				Write_Enable = 1;
 				OpCode = {`RTYPE, 4'b0000, `EXT_ADD, 4'b0000};
 			end
-			12:
+			13:
 			begin
 				// Add Reg10 + Reg11 into Reg12
 				Reset = 1'b0;
@@ -238,7 +251,7 @@ module RegisterFile_FSM(Clk, RESET, SevenSegment, Enable, LED);
 				Write_Enable = 1;
 				OpCode = {`RTYPE, 4'b0000, `EXT_ADD, 4'b0000};
 			end
-			13:
+			14:
 			begin
 				// Add Reg11 + Reg12 into Reg13
 				Reset = 1'b0;
@@ -248,7 +261,7 @@ module RegisterFile_FSM(Clk, RESET, SevenSegment, Enable, LED);
 				Write_Enable = 1;
 				OpCode = {`RTYPE, 4'b0000, `EXT_ADD, 4'b0000};
 			end
-			14:
+			15:
 			begin
 				// Add Reg12 + Reg13 into Reg14
 				Reset = 1'b0;
@@ -258,7 +271,7 @@ module RegisterFile_FSM(Clk, RESET, SevenSegment, Enable, LED);
 				Write_Enable = 1;
 				OpCode = {`RTYPE, 4'b0000, `EXT_ADD, 4'b0000};
 			end
-			15:
+			16:
 			begin
 				// Add Reg13 + Reg14 into Reg15
 				Reset = 1'b0;
@@ -279,8 +292,6 @@ module RegisterFile_FSM(Clk, RESET, SevenSegment, Enable, LED);
 				OpCode = {`RTYPE, 4'b0000, `EXT_ADD, 4'b0000};
 			end
 		endcase
-		
-		count = count + 1;
 	end
 
 endmodule
