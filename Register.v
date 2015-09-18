@@ -29,10 +29,17 @@ module Register(
 	always @(posedge(Clk))
 	begin
 		if(Reset)
+		begin
 			Reg_Out <= 16'b0;
+		end
 		else if(Write_Enable)
+		begin
 			Reg_Out <= Reg_In;
-		else Reg_Out <=Reg_Out;
+		end
+		else
+		begin
+			Reg_Out <=Reg_Out;
+		end
 	end
 
 endmodule
