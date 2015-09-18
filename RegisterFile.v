@@ -31,22 +31,7 @@ module RegisterFile(
     );
 	 
 	 //Outputs of all registers. Fed into mux (case statements).
-	 wire [15:0] Reg_0_Out;
-	 wire [15:0] Reg_1_Out;
-	 wire [15:0] Reg_2_Out;
-	 wire [15:0] Reg_3_Out;
-	 wire [15:0] Reg_4_Out;
-	 wire [15:0] Reg_5_Out;
-	 wire [15:0] Reg_6_Out;
-	 wire [15:0] Reg_7_Out;
-	 wire [15:0] Reg_8_Out;
-	 wire [15:0] Reg_9_Out;
-	 wire [15:0] Reg_10_Out;
-	 wire [15:0] Reg_11_Out;
-	 wire [15:0] Reg_12_Out;
-	 wire [15:0] Reg_13_Out;
-	 wire [15:0] Reg_14_Out;
-	 wire [15:0] Reg_15_Out;
+	 wire [15:0] Reg_Out [0:15];
 	 
 	 //Instantiation of all 16 registers. Their enable signal is only true if Enable is true and Reg_Write is their register.
 	 Register reg0(
@@ -54,7 +39,7 @@ module RegisterFile(
 		.Clk(Clk),
 		.Write_Enable(Write_Enable && (Reg_Write == 4'b0000)),
 		.Reset(Reset),
-		.Reg_Out(Reg_0_Out)
+		.Reg_Out(Reg_Out[0])
 	);
 	
 	Register reg1(
@@ -62,7 +47,7 @@ module RegisterFile(
 		.Clk(Clk),
 		.Write_Enable(Write_Enable && (Reg_Write == 4'b0001)),
 		.Reset(Reset),
-		.Reg_Out(Reg_1_Out)
+		.Reg_Out(Reg_Out[1])
 	);
 	
 	Register reg2(
@@ -70,7 +55,7 @@ module RegisterFile(
 		.Clk(Clk),
 		.Write_Enable(Write_Enable && (Reg_Write == 4'b0010)), 
 		.Reset(Reset),
-		.Reg_Out(Reg_2_Out)
+		.Reg_Out(Reg_Out[2])
 	);
 	
 	Register reg3(
@@ -78,7 +63,7 @@ module RegisterFile(
 		.Clk(Clk),
 		.Write_Enable(Write_Enable && (Reg_Write == 4'b0011)), 
 		.Reset(Reset),
-		.Reg_Out(Reg_3_Out)
+		.Reg_Out(Reg_Out[3])
 	);
 	
 	Register reg4(
@@ -86,7 +71,7 @@ module RegisterFile(
 		.Clk(Clk),
 		.Write_Enable(Write_Enable && (Reg_Write == 4'b0100)), 
 		.Reset(Reset),
-		.Reg_Out(Reg_4_Out)
+		.Reg_Out(Reg_Out[4])
 	);
 	
 	Register reg5(
@@ -94,7 +79,7 @@ module RegisterFile(
 		.Clk(Clk),
 		.Write_Enable(Write_Enable && (Reg_Write == 4'b0101)), 
 		.Reset(Reset),
-		.Reg_Out(Reg_5_Out)
+		.Reg_Out(Reg_Out[5])
 	);
 	
 	Register reg6(
@@ -102,7 +87,7 @@ module RegisterFile(
 		.Clk(Clk),
 		.Write_Enable(Write_Enable && (Reg_Write == 4'b0110)), 
 		.Reset(Reset),
-		.Reg_Out(Reg_6_Out)
+		.Reg_Out(Reg_Out[6])
 	);
 
 	Register reg7(
@@ -110,7 +95,7 @@ module RegisterFile(
 		.Clk(Clk),
 		.Write_Enable(Write_Enable && (Reg_Write == 4'b0111)), 
 		.Reset(Reset),
-		.Reg_Out(Reg_7_Out)
+		.Reg_Out(Reg_Out[7])
 	);
 	
 	Register reg8(
@@ -118,7 +103,7 @@ module RegisterFile(
 		.Clk(Clk),
 		.Write_Enable(Write_Enable && (Reg_Write == 4'b1000)), 
 		.Reset(Reset),
-		.Reg_Out(Reg_8_Out)
+		.Reg_Out(Reg_Out[8])
 	);
 	
 	Register reg9(
@@ -126,7 +111,7 @@ module RegisterFile(
 		.Clk(Clk),
 		.Write_Enable(Write_Enable && (Reg_Write == 4'b1001)), 
 		.Reset(Reset),
-		.Reg_Out(Reg_9_Out)
+		.Reg_Out(Reg_Out[9])
 	);
 	
 	Register reg10(
@@ -134,7 +119,7 @@ module RegisterFile(
 		.Clk(Clk),
 		.Write_Enable(Write_Enable && (Reg_Write == 4'b1010)), 
 		.Reset(Reset),
-		.Reg_Out(Reg_10_Out)
+		.Reg_Out(Reg_Out[10])
 	);
 	
 	Register reg11(
@@ -142,7 +127,7 @@ module RegisterFile(
 		.Clk(Clk),
 		.Write_Enable(Write_Enable && (Reg_Write == 4'b1011)), 
 		.Reset(Reset),
-		.Reg_Out(Reg_11_Out)
+		.Reg_Out(Reg_Out[11])
 	);
 	
 	Register reg12(
@@ -150,7 +135,7 @@ module RegisterFile(
 		.Clk(Clk),
 		.Write_Enable(Write_Enable && (Reg_Write == 4'b1100)), 
 		.Reset(Reset),
-		.Reg_Out(Reg_12_Out)
+		.Reg_Out(Reg_Out[12])
 	);
 	
 	Register reg13(
@@ -158,7 +143,7 @@ module RegisterFile(
 		.Clk(Clk),
 		.Write_Enable(Write_Enable && (Reg_Write == 4'b1101)), 
 		.Reset(Reset),
-		.Reg_Out(Reg_13_Out)
+		.Reg_Out(Reg_Out[13])
 	);
 	
 	Register reg14(
@@ -166,7 +151,7 @@ module RegisterFile(
 		.Clk(Clk),
 		.Write_Enable(Write_Enable && (Reg_Write == 4'b1110)), 
 		.Reset(Reset),
-		.Reg_Out(Reg_14_Out)
+		.Reg_Out(Reg_Out[14])
 	);
 	
 	Register reg15(
@@ -174,81 +159,82 @@ module RegisterFile(
 		.Clk(Clk),
 		.Write_Enable(Write_Enable && (Reg_Write == 4'b1111)), 
 		.Reset(Reset),
-		.Reg_Out(Reg_15_Out)
+		.Reg_Out(Reg_Out[15])
 	);
 
-	always @(*)
+	//Mux sensitivity list should be selector (Reg_Read_A and Reg_Read_B) and inputs to select from (Reg_Out).
+	always @(Reg_Read_A, Reg_Read_B, Reg_Out)
 	begin
 		//Output mux to A input of ALU.
 		case(Reg_Read_A)
 			4'b0000:
-				Reg_A <= Reg_0_Out;
+				Reg_A <= Reg_Out[0];
 			4'b0001:
-				Reg_A <= Reg_1_Out;
+				Reg_A <= Reg_Out[1];
 			4'b0010:
-				Reg_A <= Reg_2_Out;
+				Reg_A <= Reg_Out[2];
 			4'b0011:
-				Reg_A <= Reg_3_Out;
+				Reg_A <= Reg_Out[3];
 			4'b0100:
-				Reg_A <= Reg_4_Out;
+				Reg_A <= Reg_Out[4];
 			4'b0101:
-				Reg_A <= Reg_5_Out;
+				Reg_A <= Reg_Out[5];
 			4'b0110:
-				Reg_A <= Reg_6_Out;
+				Reg_A <= Reg_Out[6];
 			4'b0111:
-				Reg_A <= Reg_7_Out;
+				Reg_A <= Reg_Out[7];
 			4'b1000:
-				Reg_A <= Reg_8_Out;
+				Reg_A <= Reg_Out[8];
 			4'b1001:
-				Reg_A <= Reg_9_Out;
+				Reg_A <= Reg_Out[9];
 			4'b1010:
-				Reg_A <= Reg_10_Out;
+				Reg_A <= Reg_Out[10];
 			4'b1011:
-				Reg_A <= Reg_11_Out;
+				Reg_A <= Reg_Out[11];
 			4'b1100:
-				Reg_A <= Reg_12_Out;
+				Reg_A <= Reg_Out[12];
 			4'b1101:
-				Reg_A <= Reg_13_Out;
+				Reg_A <= Reg_Out[13];
 			4'b1110:
-				Reg_A <= Reg_14_Out;
+				Reg_A <= Reg_Out[14];
 			4'b1111:
-				Reg_A <= Reg_15_Out;
+				Reg_A <= Reg_Out[15];
 		endcase
 		
 		//Output mux to B input of ALU.
 		case(Reg_Read_B)
 			4'b0000:
-				Reg_B <= Reg_0_Out;
+				Reg_B <= Reg_Out[0];
 			4'b0001:
-				Reg_B <= Reg_1_Out;
+				Reg_B <= Reg_Out[1];
 			4'b0010:
-				Reg_B <= Reg_2_Out;
+				Reg_B <= Reg_Out[2];
 			4'b0011:
-				Reg_B <= Reg_3_Out;
+				Reg_B <= Reg_Out[3];
 			4'b0100:
-				Reg_B<= Reg_4_Out;
+				Reg_B <= Reg_Out[4];
 			4'b0101:
-				Reg_B <= Reg_5_Out;
+				Reg_B <= Reg_Out[5];
 			4'b0110:
-				Reg_B <= Reg_6_Out;
+				Reg_B <= Reg_Out[6];
 			4'b0111:
-				Reg_B <= Reg_7_Out;
+				Reg_B <= Reg_Out[7];
 			4'b1000:
-				Reg_B <= Reg_8_Out;
+				Reg_B <= Reg_Out[8];
 			4'b1001:
-				Reg_B <= Reg_9_Out;
+				Reg_B <= Reg_Out[9];
 			4'b1010:
-				Reg_B <= Reg_10_Out;
+				Reg_B <= Reg_Out[10];
 			4'b1011:
-				Reg_B <= Reg_11_Out;
+				Reg_B <= Reg_Out[11];
 			4'b1100:
-				Reg_B <=Reg_12_Out;
+				Reg_B <= Reg_Out[12];
 			4'b1101:
-				Reg_B <=Reg_13_Out;
+				Reg_B <= Reg_Out[13];
 			4'b1110:
-				Reg_B <= Reg_14_Out;
+				Reg_B <= Reg_Out[14];
 			4'b1111:
-				Reg_B <=Reg_15_Out;
+				Reg_B <= Reg_Out[15];
 		endcase
 	end
 endmodule
