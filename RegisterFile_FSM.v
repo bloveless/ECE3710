@@ -22,25 +22,26 @@
 
 module RegisterFile_FSM(Clk, RESET, SevenSegment, Enable, LED);
 
-	reg [32:0] counter;
-	reg operation;
-	input RESET;
-	input Clk;
-	reg [31:0] count;
-
-	reg[3:0] Reg_Write;
-	reg [3:0] Reg_Read_A;
-	reg [3:0] Reg_Read_B;
-	wire [15:0] Reg_A;
-	wire [15:0] Reg_B;
-	reg 		Write_Enable;
-	reg 		Reset;
-	
-	reg      [15:0] OpCode;
-	reg					CarryIn;
-	wire [15:0] C;
-	wire [4:0]  Flags;
-	
+	// FSM inputs/outputs
+	reg        [32:0] counter;
+	reg               operation;
+	input             RESET;
+	input             Clk;
+	reg        [31:0] count;
+	// RegisterFile inputs/outputs
+	reg         [3:0] Reg_Write;
+	reg         [3:0] Reg_Read_A;
+	reg         [3:0] Reg_Read_B;
+	wire       [15:0] Reg_A;
+	wire       [15:0] Reg_B;
+	reg               Write_Enable;
+	reg               Reset;
+	// ALU inputs/outputs
+	reg        [15:0] OpCode;
+	reg               CarryIn;
+	wire       [15:0] C;
+	wire        [4:0] Flags;
+	// SeventSeg outputs
 	output wire [6:0] SevenSegment;
 	output wire [3:0] Enable;
 	output wire [3:0] LED;
@@ -84,25 +85,26 @@ module RegisterFile_FSM(Clk, RESET, SevenSegment, Enable, LED);
 	end
 	
 	always @(posedge Clk)
-		begin
+	begin
 		if(RESET == 1'b1)
-			begin
+		begin
 				counter <= 4'd0;
 				operation <= 4'd0;
-			end
+		end
 		else
-			begin
+		begin
 			if(counter == 32'd150000000)
-				begin
+			begin
 					counter <= 32'b0;
 					operation <= !operation;
-				end
+			end
 			else 
-				begin
+			begin
 					counter <= counter+ 1'b1;
-				end
 			end
 		end
+	end
+	
 	always @(posedge(operation))
 	begin
 		case(count)
@@ -277,6 +279,7 @@ module RegisterFile_FSM(Clk, RESET, SevenSegment, Enable, LED);
 				OpCode = {`RTYPE, 4'b0000, `EXT_ADD, 4'b0000};
 			end
 		endcase
+		
 		count = count + 1;
 	end
 
