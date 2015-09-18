@@ -177,7 +177,7 @@ module RegisterFile(
 		.Reg_Out(Reg_15_Out)
 	);
 
-	always @(posedge(Clk))
+	always @(*)
 	begin
 		//Output mux to A input of ALU.
 		case(Reg_Read_A)
