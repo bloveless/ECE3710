@@ -29,7 +29,7 @@ module alu(
     output reg [4:0]  Flags
     );
 	 
-	 always @(A, B, OpCode)
+	 always @(A, B, OpCode, CarryIn)
 	 begin
 
 		// Always reset all the flags

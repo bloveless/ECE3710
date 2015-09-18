@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wave_config>
+   <wave_state>
+   </wave_state>
+   <db_ref_list>
+      <db_ref path="C:/Users/brennon/Documents/GitHub/ECE3710/RegisterFile_FSM_Runner_isim_beh.wdb" id="1" type="auto">
+         <top_modules>
+            <top_module name="RegisterFile_FSM_Runner" />
+            <top_module name="glbl" />
+         </top_modules>
+      </db_ref>
+   </db_ref_list>
+   <WVObjectSize size="14" />
+   <wvobject fp_name="/RegisterFile_FSM_Runner/uut/regFile/reg3/Clk" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">Clk</obj_property>
+      <obj_property name="ObjectShortName">Clk</obj_property>
+   </wvobject>
+   <wvobject fp_name="/RegisterFile_FSM_Runner/uut/regFile/reg3/Reset" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">Reset</obj_property>
+      <obj_property name="ObjectShortName">Reset</obj_property>
+   </wvobject>
+   <wvobject fp_name="/RegisterFile_FSM_Runner/uut/regFile/Write_Enable" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">Write_Enable</obj_property>
+      <obj_property name="ObjectShortName">Write_Enable</obj_property>
+   </wvobject>
+   <wvobject fp_name="/RegisterFile_FSM_Runner/uut/ALU/A" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">A[15:0]</obj_property>
+      <obj_property name="ObjectShortName">A[15:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/RegisterFile_FSM_Runner/uut/ALU/B" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">B[15:0]</obj_property>
+      <obj_property name="ObjectShortName">B[15:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/RegisterFile_FSM_Runner/uut/ALU/C" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">C[15:0]</obj_property>
+      <obj_property name="ObjectShortName">C[15:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/RegisterFile_FSM_Runner/uut/regFile/reg0/Write_Enable" type="logic" db_ref_id="1">
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="ElementShortName">Write_Enable</obj_property>
+      <obj_property name="ObjectShortName">Write_Enable</obj_property>
+      <obj_property name="label">Reg0 Write_Enable</obj_property>
+   </wvobject>
+   <wvobject fp_name="/RegisterFile_FSM_Runner/uut/regFile/reg0/Reg_Out" type="array" db_ref_id="1">
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="ElementShortName">Reg_Out[15:0]</obj_property>
+      <obj_property name="ObjectShortName">Reg_Out[15:0]</obj_property>
+      <obj_property name="label">Reg0 Reg_Out[15:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/RegisterFile_FSM_Runner/uut/regFile/reg1/Write_Enable" type="logic" db_ref_id="1">
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="ElementShortName">Write_Enable</obj_property>
+      <obj_property name="ObjectShortName">Write_Enable</obj_property>
+      <obj_property name="label">Reg1 Write_Enable</obj_property>
+   </wvobject>
+   <wvobject fp_name="/RegisterFile_FSM_Runner/uut/regFile/reg1/Reg_Out" type="array" db_ref_id="1">
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="ElementShortName">Reg_Out[15:0]</obj_property>
+      <obj_property name="ObjectShortName">Reg_Out[15:0]</obj_property>
+      <obj_property name="label">Reg1 Reg_Out[15:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/RegisterFile_FSM_Runner/uut/regFile/reg2/Write_Enable" type="logic" db_ref_id="1">
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="ElementShortName">Write_Enable</obj_property>
+      <obj_property name="ObjectShortName">Write_Enable</obj_property>
+      <obj_property name="label">Reg2 Write_Enable</obj_property>
+   </wvobject>
+   <wvobject fp_name="/RegisterFile_FSM_Runner/uut/regFile/reg2/Reg_Out" type="array" db_ref_id="1">
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="ElementShortName">Reg_Out[15:0]</obj_property>
+      <obj_property name="ObjectShortName">Reg_Out[15:0]</obj_property>
+      <obj_property name="label">Reg2 Reg_Out[15:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/RegisterFile_FSM_Runner/uut/regFile/reg3/Write_Enable" type="logic" db_ref_id="1">
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="ElementShortName">Write_Enable</obj_property>
+      <obj_property name="ObjectShortName">Write_Enable</obj_property>
+      <obj_property name="label">Reg3 Write_Enable</obj_property>
+   </wvobject>
+   <wvobject fp_name="/RegisterFile_FSM_Runner/uut/regFile/reg3/Reg_Out" type="array" db_ref_id="1">
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="ElementShortName">Reg_Out[15:0]</obj_property>
+      <obj_property name="ObjectShortName">Reg_Out[15:0]</obj_property>
+      <obj_property name="label">Reg3 Reg_Out[15:0]</obj_property>
+   </wvobject>
+</wave_config>

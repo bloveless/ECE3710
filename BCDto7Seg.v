@@ -75,7 +75,7 @@ module BCDto7Seg(
 		end
 	 
 		// turn on the leds to match the switches (debugging)
-		LEDs = Binary;
+		LEDs = Binary[3:0];
 		
 		case(curDigit)
 			4'b0000:
