@@ -23,6 +23,8 @@
 `define _parameters_vh
  
  // All the available operations
+ `define NOOP					16'b0
+ 
  `define RTYPE					4'b0000
  `define EXT_AND					4'b0001
  `define EXT_OR					4'b0010

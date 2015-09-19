@@ -115,11 +115,11 @@ module RegisterFile_FSM(Clk, RESET, SevenSegment, Enable, LED);
 			begin
 				// reset registers
 				Reset = 1'b1;
-				Reg_Read_A = 4'd1;
-				Reg_Read_B = 4'd1;
+				Reg_Read_A = 4'd0;
+				Reg_Read_B = 4'd0;
 				Reg_Write = 4'd0;
-				Write_Enable = 1;
-				OpCode = {`ADDI, 4'b0000, 8'b00000000};
+				Write_Enable = 0;
+				OpCode = {`NOOP};
 			end
 			1:
 			begin

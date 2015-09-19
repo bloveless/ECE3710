@@ -207,7 +207,7 @@ module alu(
 			begin
 			
 				// Invalid op, set all flags (this will probably need to be changed later)
-				Flags = 5'b11111;
+				Flags = 5'b00000;
 				C = 16'b0000000000000000;
 			
 			end
