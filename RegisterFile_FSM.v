@@ -119,7 +119,7 @@ module RegisterFile_FSM(Clk, RESET, SevenSegment, Enable, LED);
 				Reg_Read_B = 4'd0;
 				Reg_Write = 4'd0;
 				Write_Enable = 0;
-				OpCode = {`NOOP};
+				OpCode = `NOOP;
 			end
 			1:
 			begin
