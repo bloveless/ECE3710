@@ -44,6 +44,8 @@
  `define SUBI					4'b1001
  
  `define CMPI					4'b1011
+ 
+ `define SETI					4'b1010
 
  // Easy access to the flags
  `define CARRY_FLAG			0
