@@ -125,21 +125,21 @@ module RegisterFile_FSM(Clk, RESET, SevenSegment, Enable, LED);
 			begin
 				// put 1 into reg 0
 				Reset = 1'b0;
-				Reg_Read_A = 4'd1;
-				Reg_Read_B = 4'd1;
+				Reg_Read_A = 4'd0;
+				Reg_Read_B = 4'd0;
 				Reg_Write = 4'd0;
 				Write_Enable = 1;
-				OpCode = {`ADDI, 4'b0000, 8'b00000001};
+				OpCode = {`SETI, 4'b0000, 8'b00000001};
 			end
 			2:
 			begin
 				// put 1 into reg 1
 				Reset = 1'b0;
-				Reg_Read_A = 4'd2;
+				Reg_Read_A = 4'd0;
 				Reg_Read_B = 4'd0;
 				Reg_Write = 4'd1;
 				Write_Enable = 1;
-				OpCode = {`ADDI, 4'b0000, 8'b00000001};
+				OpCode = {`SETI, 4'b0000, 8'b00000001};
 			end
 			3:
 			begin
