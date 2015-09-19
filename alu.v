@@ -197,6 +197,12 @@ module alu(
 				
 			end
 			
+			`SETI:
+			begin
+				C = OpCode[7:0];
+				Flags = 5'b00000;
+			end
+			
 			default:
 			begin
 			
