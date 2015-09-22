@@ -102,7 +102,7 @@ module alu(
 					
 					default:
 					begin
-						Flags = 5'b00000;
+						Flags = 5'b000001; // Set invalid op flag
 						C = 16'b0000000000000000;
 					end
 				endcase
@@ -170,7 +170,7 @@ module alu(
 
 					default:
 					begin
-						Flags = 5'b00000;
+						Flags = 5'b000001; // Set invalid op flag
 						C = 16'b0000000000000000;
 					end
 				endcase
@@ -209,8 +209,7 @@ module alu(
 			default:
 			begin
 			
-				// Invalid op, set all flags (this will probably need to be changed later)
-				Flags = 5'b00000;
+				Flags = 5'b000001; // Set invalid op flag
 				C = 16'b0000000000000000;
 			
 			end
