@@ -18,7 +18,7 @@
 // Additional Comments: 
 //
 //////////////////////////////////////////////////////////////////////////////////
-module BCDto7Seg(
+module BCD_To_7Seg(
     input [15:0] Binary,
 	 input Clk,
     output reg [6:0] SevenSegment,

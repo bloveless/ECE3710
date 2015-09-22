@@ -18,7 +18,7 @@
 // Additional Comments: 
 //
 //////////////////////////////////////////////////////////////////////////////////
-module RegisterFile(
+module Register_File(
     input [3:0] Reg_Write,
     input [3:0] Reg_Read_A,
     input [3:0] Reg_Read_B,

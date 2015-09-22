@@ -34,7 +34,7 @@ module RegisterFile_FSM_Runner;
 	wire [3:0] LED;
 
 	// Instantiate the Unit Under Test (UUT)
-	RegisterFile_FSM uut (
+	Register_File_FSM uut (
 		.Clk(Clk), 
 		.RESET(RESET), 
 		.SevenSegment(SevenSegment), 

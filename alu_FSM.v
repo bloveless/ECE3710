@@ -61,7 +61,7 @@ module alu_FSM( A, B, C, OpCode, CLK, RESET, SevenSegment, Enable, LED);
 	
 
 	
-	BCDto7Seg BCG(
+	BCD_To_7Seg BCG(
 	 .Binary(C),
 	 .Clk(CLK),
     .SevenSegment(SevenSegment),

@@ -20,7 +20,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 `include "parameters.vh"
 
-module RegisterFile_FSM(Clk, RESET, SevenSegment, Enable, LED);
+module Register_File_FSM(Clk, RESET, SevenSegment, Enable, LED);
 
 	// FSM inputs/outputs
 	integer       		counter;
@@ -45,7 +45,7 @@ module RegisterFile_FSM(Clk, RESET, SevenSegment, Enable, LED);
 	output wire [3:0] Enable;
 	output wire [3:0] LED;
 	
-	RegisterFile regFile (
+	Register_File regFile (
 		.Reg_Write(Reg_Write),
 		.Reg_Read_A(Reg_Read_A),
 		.Reg_Read_B(Reg_Read_B),
@@ -66,7 +66,7 @@ module RegisterFile_FSM(Clk, RESET, SevenSegment, Enable, LED);
 		.Flags(Flags)
 	);
 	
-	BCDto7Seg bcd (
+	BCD_To_7Seg bcd (
 		.Binary(C),
 		.Clk(Clk),
 		.SevenSegment(SevenSegment),

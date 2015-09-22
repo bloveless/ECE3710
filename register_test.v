@@ -24,7 +24,7 @@ module registerFSM_test();
 //initialize initial register counter to 0
 
 	
-	RegisterFile regFile (
+	Register_File regFile (
 		.Reg_Write(Reg_Write),
 		.Reg_Read_A(Reg_Read_A),
 		.Reg_Read_B(Reg_Read_B),
