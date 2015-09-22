@@ -188,12 +188,15 @@ module alu(
 			begin
 			
 				if( $signed(A) < $signed(OpCode[7:0]) ) Flags[`NEG_FLAG] = 1'b1;
-						else Flags[`NEG_FLAG] = 1'b0;
-						if( $unsigned(A) < $unsigned(OpCode[7:0]) ) Flags[`LOW_FLAG] = 1'b1;
-						else Flags[`LOW_FLAG] = 1'b0;
-						if( A == OpCode[7:0] ) Flags[`ZERO_FLAG] = 1'b1;
-						else Flags[`ZERO_FLAG] = 1'b0;
-						C = 16'b0000000000000000;
+				else Flags[`NEG_FLAG] = 1'b0;
+				
+				if( $unsigned(A) < $unsigned(OpCode[7:0]) ) Flags[`LOW_FLAG] = 1'b1;
+				else Flags[`LOW_FLAG] = 1'b0;
+				
+				if( A == OpCode[7:0] ) Flags[`ZERO_FLAG] = 1'b1;
+				else Flags[`ZERO_FLAG] = 1'b0;
+				
+				C = 16'b0000000000000000;
 				
 			end
 			
