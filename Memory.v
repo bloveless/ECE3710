@@ -27,8 +27,8 @@ module Memory(
     input port_a_we,
     input port_b_we,
     input clk,
-	 output [15:0] port_a_out,
-    output [15:0] port_b_out
+	 output reg [15:0] port_a_out,
+    output reg [15:0] port_b_out
     );
 
 	parameter RAM_WIDTH = 16; //<ram_width>;
@@ -50,7 +50,7 @@ module Memory(
 	 wire [ADDRESS_WIDTH-1:0] port_b_address;
 	 reg [RAM_WIDTH-1:0] port_b_out;
 	 
-	reg [RAM_WIDTH-1:0] the_memory_core [RAM_ADDR_BITS:0];
+	reg [RAM_WIDTH-1:0] the_memory_core [NUM_RAM_ADDR_BITS:0];
 	
    always @(posedge clk)
 	begin
