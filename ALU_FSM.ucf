@@ -1,57 +1,57 @@
 
 
-NET "CLK" LOC = V10;
+NET "clk" LOC = V10;
 
 
-NET "CLK" IOSTANDARD = LVCMOS33;
+NET "clk" IOSTANDARD = LVCMOS33;
 
 
-NET "RESET" LOC = C4;
+NET "reset" LOC = C4;
 
 
-NET "RESET" IOSTANDARD = LVCMOS33;
+NET "reset" IOSTANDARD = LVCMOS33;
 
 
-NET "Enable[3]" LOC = P17;
+NET "enable[3]" LOC = P17;
 
 
-NET "Enable[3]" IOSTANDARD = LVCMOS33;
-NET "Enable[2]" IOSTANDARD = LVCMOS33;
-NET "Enable[1]" IOSTANDARD = LVCMOS33;
-NET "Enable[0]" IOSTANDARD = LVCMOS33;
-
-
-
-
-NET "SevenSegment[6]" IOSTANDARD = LVCMOS33;
-NET "SevenSegment[5]" IOSTANDARD = LVCMOS33;
-NET "SevenSegment[4]" IOSTANDARD = LVCMOS33;
-NET "SevenSegment[3]" IOSTANDARD = LVCMOS33;
-NET "SevenSegment[2]" IOSTANDARD = LVCMOS33;
-NET "SevenSegment[1]" IOSTANDARD = LVCMOS33;
-NET "SevenSegment[0]" IOSTANDARD = LVCMOS33;
+NET "enable[3]" IOSTANDARD = LVCMOS33;
+NET "enable[2]" IOSTANDARD = LVCMOS33;
+NET "enable[1]" IOSTANDARD = LVCMOS33;
+NET "enable[0]" IOSTANDARD = LVCMOS33;
 
 
 
 
-NET "LED[3]" IOSTANDARD = LVCMOS33;
-NET "LED[2]" IOSTANDARD = LVCMOS33;
-NET "LED[1]" IOSTANDARD = LVCMOS33;
-NET "LED[0]" IOSTANDARD = LVCMOS33;
+NET "seven_segment[6]" IOSTANDARD = LVCMOS33;
+NET "seven_segment[5]" IOSTANDARD = LVCMOS33;
+NET "seven_segment[4]" IOSTANDARD = LVCMOS33;
+NET "seven_segment[3]" IOSTANDARD = LVCMOS33;
+NET "seven_segment[2]" IOSTANDARD = LVCMOS33;
+NET "seven_segment[1]" IOSTANDARD = LVCMOS33;
+NET "seven_segment[0]" IOSTANDARD = LVCMOS33;
+
+
+
+
+NET "led[3]" IOSTANDARD = LVCMOS33;
+NET "led[2]" IOSTANDARD = LVCMOS33;
+NET "led[1]" IOSTANDARD = LVCMOS33;
+NET "led[0]" IOSTANDARD = LVCMOS33;
 
 # PlanAhead Generated physical constraints 
 
-NET "Enable[2]" LOC = P18;
-NET "Enable[1]" LOC = N15;
-NET "Enable[0]" LOC = N16;
-NET "LED[3]" LOC = V15;
-NET "LED[2]" LOC = U15;
-NET "LED[1]" LOC = V16;
-NET "LED[0]" LOC = U16;
-NET "SevenSegment[6]" LOC = T17;
-NET "SevenSegment[5]" LOC = T18;
-NET "SevenSegment[4]" LOC = U17;
-NET "SevenSegment[3]" LOC = U18;
-NET "SevenSegment[2]" LOC = M14;
-NET "SevenSegment[1]" LOC = N14;
-NET "SevenSegment[0]" LOC = L14;
+NET "enable[2]" LOC = P18;
+NET "enable[1]" LOC = N15;
+NET "enable[0]" LOC = N16;
+NET "led[3]" LOC = V15;
+NET "led[2]" LOC = U15;
+NET "led[1]" LOC = V16;
+NET "led[0]" LOC = U16;
+NET "seven_segment[6]" LOC = T17;
+NET "seven_segment[5]" LOC = T18;
+NET "seven_segment[4]" LOC = U17;
+NET "seven_segment[3]" LOC = U18;
+NET "seven_segment[2]" LOC = M14;
+NET "seven_segment[1]" LOC = N14;
+NET "seven_segment[0]" LOC = L14;
