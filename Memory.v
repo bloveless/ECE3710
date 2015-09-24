@@ -31,26 +31,9 @@ module Memory(
     output reg [15:0] port_b_out
     );
 
-	parameter RAM_WIDTH = 16; //<ram_width>;
 	parameter NUM_RAM_ADDR_BITS = (1024*32)-1; //<ram_addr_bits>;
-	parameter ADDRESS_WIDTH = 15;
-	
-	//logical/clock inputs
-    wire port_a_we;
-    wire port_b_we;
-    wire clk;
-	 
-	 // Port A
-	 wire [RAM_WIDTH-1:0] port_a_in;
-	 wire [14:0] port_a_address;
-	 reg [RAM_WIDTH-1:0] port_a_out;
-	 
-	 //Port B
-	 wire [RAM_WIDTH-1:0] port_b_in;
-	 wire [ADDRESS_WIDTH-1:0] port_b_address;
-	 reg [RAM_WIDTH-1:0] port_b_out;
-	 
-	reg [RAM_WIDTH-1:0] the_memory_core [NUM_RAM_ADDR_BITS:0];
+		 
+	reg [15:0] the_memory_core [NUM_RAM_ADDR_BITS:0];
 	
    always @(posedge clk)
 	begin
