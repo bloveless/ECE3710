@@ -22,39 +22,39 @@
 // 
 ////////////////////////////////////////////////////////////////////////////////
 
-module RegisterFile_FSM_Runner;
+module Register_File_FSM_Runner;
 
 	// Inputs
-	reg Clk;
-	reg RESET;
+	reg clk;
+	reg reset;
 
 	// Outputs
-	wire [6:0] SevenSegment;
-	wire [3:0] Enable;
-	wire [3:0] LED;
+	wire [6:0] seven_segment;
+	wire [3:0] enable;
+	wire [3:0] led;
 
 	// Instantiate the Unit Under Test (UUT)
 	Register_File_FSM uut (
-		.Clk(Clk), 
-		.RESET(RESET), 
-		.SevenSegment(SevenSegment), 
-		.Enable(Enable), 
-		.LED(LED)
+		.clk(clk), 
+		.reset(reset), 
+		.seven_segment(seven_segment), 
+		.enable(enable), 
+		.led(led)
 	);
 
 	initial begin
 		// Initialize Inputs
-		Clk = 0;
-		RESET = 0;
+		clk = 0;
+		reset = 0;
 
 		// Wait 100 ns for global reset to finish
 		#100;
 		
-		RESET = 1;
+		reset = 1;
 		
 		#4;
 		
-		RESET = 0;
+		reset = 0;
 		
 		#4;
         
@@ -64,7 +64,7 @@ module RegisterFile_FSM_Runner;
 	
 	always begin
 		#1;
-		Clk = !Clk;
+		clk = !clk;
 	end
       
 endmodule
