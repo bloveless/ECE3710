@@ -19,9 +19,9 @@
 //////////////////////////////////////////////////////////////////////////////////
 `include "parameters.vh"
 
-module ALU_FSM( a, b, c, opcode, clk, reset, seven_segment, enable, led);
+module ALU_FSM( a, b, c, opcode, clk, reset_btn, seven_segment, enable, led);
 	
-	input clk, reset;
+	input clk, reset_btn;
 	output a, b, c, opcode;
 
 	output wire [6:0] seven_segment;
@@ -29,7 +29,7 @@ module ALU_FSM( a, b, c, opcode, clk, reset, seven_segment, enable, led);
 	output wire [3:0] led;
 	 
 	
-	wire clk, reset;
+	wire clk, reset_btn;
 	wire [15:0] a;
 	wire [15:0] b;
 	wire [15:0] c;
@@ -147,7 +147,7 @@ module ALU_FSM( a, b, c, opcode, clk, reset, seven_segment, enable, led);
 
 	always @(posedge clk)
 		begin
-		if(reset == 1'b1)
+		if(reset_btn == 1'b1)
 			begin
 				current_op <= 4'd0;
 			end
@@ -167,7 +167,7 @@ module ALU_FSM( a, b, c, opcode, clk, reset, seven_segment, enable, led);
 		
 	always @(*)
 		begin
-			if(reset == 1'b1)
+			if(reset_btn == 1'b1)
 			begin
 				  opcode_output = 16'b0;
 				  a_output = 16'b0;

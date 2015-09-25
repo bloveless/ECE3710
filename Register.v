@@ -19,26 +19,26 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 module Register(
-    input [15:0] Reg_In,
-    input Clk,
-    input Write_Enable,
-	 input Reset,
-	 output reg [15:0] Reg_Out
+    input [15:0] reg_in,
+    input clk,
+    input write_enable,
+	 input reset,
+	 output reg [15:0] reg_out
     );
 
-	always @(posedge(Clk))
+	always @(posedge(clk))
 	begin
-		if(Reset)
+		if(reset)
 		begin
-			Reg_Out <= 16'b0;
+			reg_out <= 16'b0;
 		end
-		else if(Write_Enable)
+		else if(write_enable)
 		begin
-			Reg_Out <= Reg_In;
+			reg_out <= reg_in;
 		end
 		else
 		begin
-			Reg_Out <=Reg_Out;
+			reg_out <=reg_out;
 		end
 	end
 
