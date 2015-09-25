@@ -19,54 +19,55 @@
 //////////////////////////////////////////////////////////////////////////////////
 `include "parameters.vh"
 
-module alu_FSM( A, B, C, OpCode, CLK, RESET, SevenSegment, Enable, LED);
+module ALU_FSM( a, b, c, opcode, clk, reset_btn, seven_segment, enable, led);
 	
-	input CLK, RESET;
-	output A, B, C, OpCode;
+	input clk, reset_btn;
+	output a, b, c, opcode;
 
-	output wire [6:0] SevenSegment;
-	output wire [3:0] Enable;
-	output wire [3:0] LED;
+	output wire [6:0] seven_segment;
+	output wire [3:0] enable;
+	output wire [3:0] led;
 	 
 	
-	wire CLK, RESET;
-	wire [15:0] A;
-	wire [15:0] B;
-	wire [15:0] C;
-	wire [15:0] OpCode;
+	wire clk, reset_btn;
+	wire [15:0] a;
+	wire [15:0] b;
+	wire [15:0] c;
+	wire [15:0] opcode;
+	wire [4:0] flags;
 	
-	reg [3:0] currentOp=4'b0;
-	reg CarryIn = 1'b0;
+	reg [3:0] current_op=4'b0;
+	reg carry_in = 1'b0;
 	
-	reg [15:0] A_output;
-	reg [15:0] B_output;
-	reg [15:0] OpCode_output;
+	reg [15:0] a_output;
+	reg [15:0] b_output;
+	reg [15:0] opcode_output;
 	
 	reg [32:0] counter;
 	
-	assign A = A_output;
-	assign B = B_output;
-	assign OpCode = OpCode_output;
+	assign a = a_output;
+	assign b = b_output;
+	assign opcode = opcode_output;
 
 	
 	// Instantiate the Unit Under Test (UUT)
-	alu ALU(
-		.A(A), 
-		.B(B), 
-		.OpCode(OpCode), 
-		.CarryIn(CarryIn),
-		.C(C), 
-		.Flags(Flags)
+	ALU alu (
+		.a(a), 
+		.b(b), 
+		.opcode(opcode), 
+		.carry_in(carry_in),
+		.c(c), 
+		.flags(flags)
 	);
 	
 
 	
-	BCD_To_7Seg BCG(
-	 .Binary(C),
-	 .Clk(CLK),
-    .SevenSegment(SevenSegment),
-	 .Enable(Enable),
-	 .LEDs(LED)
+	BCD_To_7Seg bcg(
+	 .binary(c),
+	 .clk(clk),
+    .seven_segment(seven_segment),
+	 .enable(enable),
+	 .leds(led)
 	);
 
 	       localparam EXT_ADD_NUM=4'd0,
@@ -144,17 +145,17 @@ module alu_FSM( A, B, C, OpCode, CLK, RESET, SevenSegment, Enable, LED);
 			  CMPI_A = 16'b10,
 			  CMPI_B = 16'b0;
 
-	always @(posedge CLK)
+	always @(posedge clk)
 		begin
-		if(RESET == 1'b1)
+		if(reset_btn == 1'b1)
 			begin
-				currentOp <= 4'd0;
+				current_op <= 4'd0;
 			end
 		else
 			begin
 			if(counter == 32'b10001111000011010001100000000)
 				begin
-					currentOp <= currentOp + 1'd1;
+					current_op <= current_op + 1'd1;
 					counter <= 32'b0;
 				end
 			else 
@@ -166,123 +167,123 @@ module alu_FSM( A, B, C, OpCode, CLK, RESET, SevenSegment, Enable, LED);
 		
 	always @(*)
 		begin
-			if(RESET == 1'b1)
+			if(reset_btn == 1'b1)
 			begin
-				  OpCode_output = 16'b0;
-				  A_output = 16'b0;
-				  B_output =16'b0;
+				  opcode_output = 16'b0;
+				  a_output = 16'b0;
+				  b_output =16'b0;
 			end
-			case(currentOp)
+			case(current_op)
 				  EXT_ADD_NUM:
 				  begin 
-				  OpCode_output = EXT_ADD_OP;
-				  A_output = EXT_ADD_A;
-				  B_output = EXT_ADD_B;
+				  opcode_output = EXT_ADD_OP;
+				  a_output = EXT_ADD_A;
+				  b_output = EXT_ADD_B;
 				  end
 				  
 				  EXT_OR_NUM:
 				  begin
-				  OpCode_output = EXT_OR_OP;
-				  A_output = EXT_OR_A;
-				  B_output = EXT_OR_B;
+				  opcode_output = EXT_OR_OP;
+				  a_output = EXT_OR_A;
+				  b_output = EXT_OR_B;
 				  end
 				  
 				  EXT_XOR_NUM:
 				  begin
-				  OpCode_output = EXT_XOR_OP;
-				  A_output=EXT_XOR_A;
-				  B_output = EXT_XOR_B;
+				  opcode_output = EXT_XOR_OP;
+				  a_output=EXT_XOR_A;
+				  b_output = EXT_XOR_B;
 				  end
 				  
 				  EXT_AND_NUM:
 				  begin
-				  OpCode_output = EXT_AND_OP;
-				  A_output = EXT_AND_A;
-				  B_output = EXT_AND_B;
+				  opcode_output = EXT_AND_OP;
+				  a_output = EXT_AND_A;
+				  b_output = EXT_AND_B;
 				  end
 				  
 				  EXT_SUB_NUM:
 				  begin
-				  OpCode_output = EXT_SUB_OP;
-				  A_output = EXT_SUB_A;
-				  B_output = EXT_SUB_B;
+				  opcode_output = EXT_SUB_OP;
+				  a_output = EXT_SUB_A;
+				  b_output = EXT_SUB_B;
 				  end
 				  
 				  EXT_CMP_NUM:
 				  begin
-				  OpCode_output = EXT_CMP_OP;
-				  A_output = EXT_CMP_A;
-				  B_output = EXT_CMP_B;
+				  opcode_output = EXT_CMP_OP;
+				  a_output = EXT_CMP_A;
+				  b_output = EXT_CMP_B;
 				  end
 				  
 				  ADDI_NUM:
 				  begin
-				  OpCode_output = ADDI_OP;
-				  A_output = ADDI_A;
-				  B_output = ADDI_B;
+				  opcode_output = ADDI_OP;
+				  a_output = ADDI_A;
+				  b_output = ADDI_B;
 				  end
 				  
 				  EXT_LSHI_LEFT_NUM:
 				  begin
-				  OpCode_output = EXT_LSHI_LEFT_OP;
-				  A_output = EXT_LSHI_LEFT_A;
-				  B_output = EXT_LSHI_LEFT_B;
+				  opcode_output = EXT_LSHI_LEFT_OP;
+				  a_output = EXT_LSHI_LEFT_A;
+				  b_output = EXT_LSHI_LEFT_B;
 				  end
 				  
 				  EXT_LSHI_RIGHT_NUM:
 				  begin
-				  OpCode_output = EXT_LSHI_RIGHT_OP;
-				  A_output = EXT_LSHI_RIGHT_A;
-				  B_output = EXT_LSHI_RIGHT_B;
+				  opcode_output = EXT_LSHI_RIGHT_OP;
+				  a_output = EXT_LSHI_RIGHT_A;
+				  b_output = EXT_LSHI_RIGHT_B;
 				  end
 				  
 				  EXT_ASHUI_LEFT_NUM:
 				  begin
-				  OpCode_output = EXT_ASHUI_LEFT_OP;
-				  A_output = EXT_ASHUI_LEFT_A;
-				  B_output = EXT_ASHUI_LEFT_B;
+				  opcode_output = EXT_ASHUI_LEFT_OP;
+				  a_output = EXT_ASHUI_LEFT_A;
+				  b_output = EXT_ASHUI_LEFT_B;
 				  end
 				  
 				  EXT_ASHUI_RIGHT_NUM:
 				  begin
-				  OpCode_output = EXT_ASHUI_RIGHT_OP;
-				  A_output = EXT_ASHUI_RIGHT_A;
-				  B_output = EXT_ASHUI_RIGHT_B;
+				  opcode_output = EXT_ASHUI_RIGHT_OP;
+				  a_output = EXT_ASHUI_RIGHT_A;
+				  b_output = EXT_ASHUI_RIGHT_B;
 				  end
 				  
 				  EXT_LSH_NUM:
 				  begin
-				  OpCode_output = EXT_LSH_OP;
-				  A_output = EXT_LSH_A;
-				  B_output = EXT_LSH_B;
+				  opcode_output = EXT_LSH_OP;
+				  a_output = EXT_LSH_A;
+				  b_output = EXT_LSH_B;
 				  end
 				  
 				  EXT_ASHU_NUM:
 				  begin
-				  OpCode_output = EXT_ASHU_OP;
-				  A_output = EXT_ASHU_A;
-				  B_output = EXT_ASHU_B;
+				  opcode_output = EXT_ASHU_OP;
+				  a_output = EXT_ASHU_A;
+				  b_output = EXT_ASHU_B;
 				  end
 				  
 				  SUBI_NUM:
 				  begin
-				  OpCode_output = SUBI_OP;
-				  A_output = SUBI_A;
-				  B_output = SUBI_B;
+				  opcode_output = SUBI_OP;
+				  a_output = SUBI_A;
+				  b_output = SUBI_B;
 				  end
 				  
 				  CMPI_NUM:
 				  begin
-				  OpCode_output = CMPI_OP;
-				  A_output = CMPI_A;
-				  B_output = CMPI_B;
+				  opcode_output = CMPI_OP;
+				  a_output = CMPI_A;
+				  b_output = CMPI_B;
 				  
 				  end
 			default: 
 						begin
-							OpCode_output = 16'b0;
-							A_output = 16'b0;
-							B_output =16'b0;
+							opcode_output = 16'b0;
+							a_output = 16'b0;
+							b_output =16'b0;
 						end
 		endcase
 		
