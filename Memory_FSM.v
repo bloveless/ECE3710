@@ -49,11 +49,11 @@ module Memory_FSM(
 	);
 	
 	BCD_To_7Seg bcd (
-		.Binary(output_to_display),
-		.Clk(clk),
-		.SevenSegment(seven_segment),
-		.Enable(enable),
-		.LEDs(led)
+		.binary(output_to_display),
+		.clk(clk),
+		.seven_segment(seven_segment),
+		.enable(enable),
+		.leds(led)
 	);
 	
 	//Where in memory to start the fibonacci.
