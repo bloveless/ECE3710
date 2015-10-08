@@ -76,7 +76,7 @@ module Memory_Test;
 		// Add stimulus here
 		
 		// Set every memory location's value to its address
-		for(i = 0; i < 2**15; i = i + 1)
+		for(i = 0; i <= (2**15 - 1); i = i + 1)
 		begin
 			port_a_address = i;
 			port_a_in = i;
@@ -92,6 +92,10 @@ module Memory_Test;
 			if((port_a_address != port_a_in) && (port_a_in != read_a_tmp))
 			begin
 				$display("ERROR: I: %d Data: %d Out: %d", port_a_address, port_a_in, read_a_tmp);
+			end
+			else if((i % 1000) == 0)
+			begin
+				$display("PASSED INSERT: %d", i);
 			end
 			
 		end
@@ -114,7 +118,7 @@ module Memory_Test;
 		
 		// Read every memory location's value and make sure it is equal to its address
 		// we are going to do this one backwards just for fun
-		for(j = 2**15; j >= 0; j = j - 1)
+		for(j = (2**15 - 1); (j >= 0) && (j < 2**15); j = j - 1)
 		begin
 			port_b_address = j;
 			port_b_in = 0;
@@ -127,18 +131,12 @@ module Memory_Test;
 			
 			if(read_b_tmp != j)
 			begin
-				if((j % 100) == 0)
-				begin
-					// Check that the values are valid
-					$display("ERROR: Data %d in address %d", read_b_tmp, j);
-				end
+				// Check that the values are valid
+				$display("ERROR: Data %d in address %d", read_b_tmp, j);
 			end
-			else
+			else if((j % 1000) == 0)
 			begin
-				if((j % 100) == 0)
-				begin
-					$display("%d", j);
-				end
+				$display("PASSED RETRIEVE: %d", j);
 			end
 			
 		end
