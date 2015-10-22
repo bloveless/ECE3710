@@ -19,7 +19,48 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 module Control(
-    );
+		input reset_btn,
+		input clk
+   );
+	
+	// Allow 16 bits so we can address peripherals
+	// If the 16th bit is 1 we select from a peripheral
+	// If it is 0 we are reading from memory
+	reg [15:0] pc = 16'b0;
+	
+   reg reset;
+	
+	/* Inputs */
+	// Memory
+	reg [14:0] port_a_address;
+   reg [14:0] port_b_address;
+   reg [15:0] port_a_in;
+   reg [15:0] port_b_in;
+   reg        port_a_we;
+   reg        port_b_we;
+	// Reg File
+	reg [3:0]  reg_write;
+   reg [3:0]  reg_read_a;
+   reg [3:0]  reg_read_b;
+   reg        write_enable;
+	reg [15:0] alu_input;
+	// ALU
+	reg [15:0] a;
+   reg [15:0] b;
+   reg [15:0] opcode;
+	reg        carry_in;
+	
+	
+	/* Outputs */
+	// Memory
+	reg [15:0] port_a_out;
+   reg [15:0] port_b_out;
+	// Reg File
+   reg [15:0] reg_a;
+   reg [15:0] reg_b;
+	// ALU
+   reg [15:0] c;
+   reg [4:0]  flags;
 
 	Memory memory (
 		.port_a_address(port_a_address),
