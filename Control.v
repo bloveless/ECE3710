@@ -108,10 +108,10 @@ module Control(
 			begin
 				//TODO: Set control lines for decode state
 				case(op[15:12])
-					//JTYPE:
-					//begin
-						//state = 3;
-					//end
+					JTYPE:
+					begin
+						state = 3;
+					end
 					default: //RTYPES and ITYPES
 					begin
 						state = 2;

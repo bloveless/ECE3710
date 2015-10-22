@@ -48,6 +48,8 @@
  `define CMPI					4'b1011
  
  `define SETI					4'b1010
+ 
+ `define JTYPE					4'b0100
 
  // Easy access to the flags
  `define CARRY_FLAG			0
