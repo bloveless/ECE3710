@@ -108,20 +108,14 @@ module Control(
 			begin
 				//TODO: Set control lines for decode state
 				case(op[15:12])
-					RTYPE:
-						state <= 2;
-					ADDI:
-						state <= 2;
-					SHIFTS:
-						state <= 2;
-					SUBI:
-						state <= 2;
-					CMPI:
-						state <= 2;
-					SETI:
-						state <= 2;
-					//JMP
+					//JTYPE:
+					//begin
 						//state = 3;
+					//end
+					default: //RTYPES and ITYPES
+					begin
+						state = 2;
+					end
 				endcase
 			end
 			
@@ -141,11 +135,19 @@ module Control(
 		
 		//PC Counter
 		if(pc_enable == 1'b1)
+		begin
 			//if(pc_jmp = 1'b0)
+			//begin
 				pc_counter <= pc_counter + 15'b1;
+			//end
 			//else
+			//begin
 				//pc_counter <= pc_counter + pc_add_amount
+			//end
+		end
 		else
+		begin
 			pc_counter <= pc_counter;
+		end
 	end
 endmodule
