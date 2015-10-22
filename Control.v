@@ -95,4 +95,57 @@ module Control(
 		.flags(flags)
 	);
 
+	always@(posedge clk)
+	begin
+		case(state)
+			0:	//Fetch/Reset state
+			begin
+				//TODO: Set control lines for fetch state
+				state <= 1;
+			end
+			
+			1: //Decode state
+			begin
+				//TODO: Set control lines for decode state
+				case(op[15:12])
+					RTYPE:
+						state <= 2;
+					ADDI:
+						state <= 2;
+					SHIFTS:
+						state <= 2;
+					SUBI:
+						state <= 2;
+					CMPI:
+						state <= 2;
+					SETI:
+						state <= 2;
+					//JMP
+						//state = 3;
+				endcase
+			end
+			
+			2:	//RTYPE and ITYPE control lines set;
+			begin
+				//TODO: Set control lines for RTYPE and ITYPE instructions
+				pc_enable <= 1;
+				state <= 0;
+			end
+			
+			//3: //Future jmp type state
+			//begin
+				//TODO: Set control lines for JMP instructions
+				//state = 0
+			//end
+		endcase
+		
+		//PC Counter
+		if(pc_enable == 1'b1)
+			//if(pc_jmp = 1'b0)
+				pc_counter <= pc_counter + 15'b1;
+			//else
+				//pc_counter <= pc_counter + pc_add_amount
+		else
+			pc_counter <= pc_counter;
+	end
 endmodule
