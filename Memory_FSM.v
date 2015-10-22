@@ -20,7 +20,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 module Memory_FSM(
     input clk,
-	 input reset,
+	 input reset_btn,
     output [6:0] seven_segment,
     output [3:0] enable,
 	 output [3:0] led
@@ -61,7 +61,7 @@ module Memory_FSM(
 
 	always@ (posedge(clk))
 	begin
-		if(reset == 1)
+		if(reset_btn == 1)
 		begin
 			count = 0;
 			operation = 0;

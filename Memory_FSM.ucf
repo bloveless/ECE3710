@@ -1,0 +1,57 @@
+
+
+NET "clk" LOC = V10;
+
+
+NET "clk" IOSTANDARD = LVCMOS33;
+
+
+NET "reset_btn" LOC = C4;
+
+
+NET "reset_btn" IOSTANDARD = LVCMOS33;
+
+
+NET "enable[3]" LOC = P17;
+
+
+NET "enable[3]" IOSTANDARD = LVCMOS33;
+NET "enable[2]" IOSTANDARD = LVCMOS33;
+NET "enable[1]" IOSTANDARD = LVCMOS33;
+NET "enable[0]" IOSTANDARD = LVCMOS33;
+
+
+
+
+NET "seven_segment[6]" IOSTANDARD = LVCMOS33;
+NET "seven_segment[5]" IOSTANDARD = LVCMOS33;
+NET "seven_segment[4]" IOSTANDARD = LVCMOS33;
+NET "seven_segment[3]" IOSTANDARD = LVCMOS33;
+NET "seven_segment[2]" IOSTANDARD = LVCMOS33;
+NET "seven_segment[1]" IOSTANDARD = LVCMOS33;
+NET "seven_segment[0]" IOSTANDARD = LVCMOS33;
+
+
+
+
+NET "led[3]" IOSTANDARD = LVCMOS33;
+NET "led[2]" IOSTANDARD = LVCMOS33;
+NET "led[1]" IOSTANDARD = LVCMOS33;
+NET "led[0]" IOSTANDARD = LVCMOS33;
+
+# PlanAhead Generated physical constraints 
+
+NET "enable[2]" LOC = P18;
+NET "enable[1]" LOC = N15;
+NET "enable[0]" LOC = N16;
+NET "led[3]" LOC = V15;
+NET "led[2]" LOC = U15;
+NET "led[1]" LOC = V16;
+NET "led[0]" LOC = U16;
+NET "seven_segment[6]" LOC = T17;
+NET "seven_segment[5]" LOC = T18;
+NET "seven_segment[4]" LOC = U17;
+NET "seven_segment[3]" LOC = U18;
+NET "seven_segment[2]" LOC = M14;
+NET "seven_segment[1]" LOC = N14;
+NET "seven_segment[0]" LOC = L14;
