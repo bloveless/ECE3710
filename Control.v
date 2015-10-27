@@ -32,9 +32,7 @@ module Control(
 	
 	/* Inputs */
 	// Memory
-	reg [14:0] port_a_address;
    reg [14:0] port_b_address;
-   reg [15:0] port_a_in;
    reg [15:0] port_b_in;
    reg        port_a_we;
    reg        port_b_we;
@@ -61,11 +59,20 @@ module Control(
 	// ALU
    reg [15:0] c;
    reg [4:0]  flags;
+	
+	//Mux Controls
+	reg c_or_mem_control;	//Mux control line
+	wire c_or_mem;				//Mux output
+	assign c_or_mem = c_or_mem_control ? c : port_a_out;
+	
+	reg pc_or_b_control;		//Mux control line
+	wire pc_or_b;				//Mux output
+	assign pc_or_b = pc_or_b_control ? pc_counter : reg_b;
 
 	Memory memory (
-		.port_a_address(port_a_address),
+		.port_a_address(pc_or_b[14:0]),
 		.port_b_address(port_b_address),
-		.port_a_in(port_a_in),
+		.port_a_in(c),
 		.port_b_in(port_b_in),
 		.port_a_we(port_a_we),
 		.port_b_we(port_b_we),
@@ -80,7 +87,7 @@ module Control(
 		.reg_read_b(reg_read_b),
 		.write_enable(write_enable),
 		.reset(reset),
-		.alu_input(c),
+		.alu_input(c_or_mem),
 		.reg_a(reg_a),
 		.reg_b(reg_b),
 		.clk(clk)
@@ -94,60 +101,84 @@ module Control(
 		.c(c),
 		.flags(flags)
 	);
+	
+	reg [4:0] saved_flags;
+	reg [15:0] op;
+	reg [1:0] state;
 
 	always@(posedge clk)
 	begin
-		case(state)
-			0:	//Fetch/Reset state
-			begin
-				//TODO: Set control lines for fetch state
-				state <= 1;
-			end
-			
-			1: //Decode state
-			begin
-				//TODO: Set control lines for decode state
-				case(op[15:12])
-					JTYPE:
-					begin
-						state = 3;
-					end
-					default: //RTYPES and ITYPES
-					begin
-						state = 2;
-					end
-				endcase
-			end
-			
-			2:	//RTYPE and ITYPE control lines set;
-			begin
-				//TODO: Set control lines for RTYPE and ITYPE instructions
-				pc_enable <= 1;
-				state <= 0;
-			end
-			
-			//3: //Future jmp type state
-			//begin
-				//TODO: Set control lines for JMP instructions
-				//state = 0
-			//end
-		endcase
-		
-		//PC Counter
-		if(pc_enable == 1'b1)
+		if(reset_btn)
 		begin
-			//if(pc_jmp = 1'b0)
-			//begin
-				pc_counter <= pc_counter + 15'b1;
-			//end
-			//else
-			//begin
-				//pc_counter <= pc_counter + pc_add_amount
-			//end
+			reset <= 1;
+			pc_counter <= 0;
+			state <= 0;
 		end
 		else
 		begin
-			pc_counter <= pc_counter;
+			reset <= 0;
+			case(state)
+				0:	//Fetch state
+				begin
+					//TODO: Set control lines for fetch state
+					op <= port_a_out;	//Fetch the instruction from memory
+					state <= 1;
+				end
+			
+				1: //Decode state
+				begin
+					//TODO: Set control lines for decode state
+					case(op[15:12])	//Decode the instruction. Next state depends on instruction type.
+						JTYPE:
+						begin
+							state <= 3;
+						end
+						default: //RTYPES and ITYPES
+						begin
+							state <= 2;
+						end
+					endcase
+				end
+				
+				2:	//RTYPE and ITYPE control lines set;
+				begin
+					//TODO: Set control lines for RTYPE and ITYPE instructions
+					pc_enable <= 1;
+					write_enable <= 1;
+					reg_read_a <= op[11:8];
+					reg_read_b <= op[3:0];
+					reg_write <= op[11:8];
+					opcode = op;
+					carry_in = saved_flags[0];
+					port_a_we <= 0;
+					c_or_mem_control <= 1;
+					pc_or_b <= 1;
+					saved_flags <= flags;
+					state <= 0;
+				end
+				
+				//3: //Future jmp type state
+				//begin
+					//TODO: Set control lines for JMP instructions
+					//state = 0
+				//end
+			endcase
+			//PC Counter
+			if(pc_enable == 1'b1)
+			begin
+				//if(pc_jmp = 1'b0)
+				//begin
+					pc_counter <= pc_counter + 15'b1;
+				//end
+				//else
+				//begin
+					//pc_counter <= pc_counter + pc_add_amount
+				//end
+			end
+			else
+			begin
+				pc_counter <= pc_counter;
+			end
 		end
 	end
 endmodule
