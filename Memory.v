@@ -35,6 +35,8 @@ module Memory(
 		 
 	reg [15:0] the_memory_core [NUM_RAM_ADDR_BITS:0];
 	
+	initial $readmemb("program.txt", the_memory_core);
+	
    always @(posedge clk)
 	begin
 	

@@ -18,9 +18,14 @@
 // Additional Comments: 
 //
 //////////////////////////////////////////////////////////////////////////////////
+`include "parameters.vh"
+
 module Control(
 		input reset_btn,
-		input clk
+		input clk,
+		output [6:0] seven_segment,
+		output [3:0] enable,
+		output [3:0] leds
    );
 	
 	// Allow 16 bits so we can address peripherals
@@ -51,26 +56,26 @@ module Control(
 	
 	/* Outputs */
 	// Memory
-	reg [15:0] port_a_out;
-   reg [15:0] port_b_out;
+	wire [15:0] port_a_out;
+   wire [15:0] port_b_out;
 	// Reg File
-   reg [15:0] reg_a;
-   reg [15:0] reg_b;
+   wire [15:0] reg_a;
+   wire [15:0] reg_b;
 	// ALU
-   reg [15:0] c;
-   reg [4:0]  flags;
+   wire [15:0] c;
+   wire [4:0]  flags;
 	
 	//Mux Controls
 	reg c_or_mem_control;	//Mux control line
-	wire c_or_mem;				//Mux output
+	wire [15:0] c_or_mem;				//Mux output
 	assign c_or_mem = c_or_mem_control ? c : port_a_out;
 	
 	reg pc_or_b_control;		//Mux control line
-	wire pc_or_b;				//Mux output
-	assign pc_or_b = pc_or_b_control ? pc_counter : reg_b;
+	wire [14:0] pc_or_b;				//Mux output
+	assign pc_or_b = pc_or_b_control ? pc : reg_b;
 
 	Memory memory (
-		.port_a_address(pc_or_b[14:0]),
+		.port_a_address(pc_or_b),
 		.port_b_address(port_b_address),
 		.port_a_in(c),
 		.port_b_in(port_b_in),
@@ -93,25 +98,39 @@ module Control(
 		.clk(clk)
 	);
 	
+	BCD_To_7Seg bcd (
+		.binary(c),
+		.clk(clk),
+		.seven_segment(seven_segment),
+		.enable(enable),
+		.leds(leds)
+	);
+	
+	reg alu_from_opcode_or_control;
+	wire [15:0] alu_in;
+	reg [15:0] control_to_alu;
+	assign alu_in = alu_from_opcode_or_control ? opcode : control_to_alu;
+	
+	
 	ALU alu (
 	   .a(reg_a),
 		.b(reg_b),
-		.opcode(opcode),
+		.opcode(alu_in),
 		.carry_in(carry_in),
 		.c(c),
 		.flags(flags)
 	);
 	
 	reg [4:0] saved_flags;
-	reg [15:0] op;
 	reg [1:0] state;
+	reg pc_enable;
 
 	always@(posedge clk)
 	begin
 		if(reset_btn)
 		begin
 			reset <= 1;
-			pc_counter <= 0;
+			pc <= 0;
 			state <= 0;
 		end
 		else
@@ -121,15 +140,15 @@ module Control(
 				0:	//Fetch state
 				begin
 					//TODO: Set control lines for fetch state
-					op <= port_a_out;	//Fetch the instruction from memory
+					opcode <= port_a_out;	//Fetch the instruction from memory
 					state <= 1;
 				end
 			
 				1: //Decode state
 				begin
 					//TODO: Set control lines for decode state
-					case(op[15:12])	//Decode the instruction. Next state depends on instruction type.
-						JTYPE:
+					case(opcode[15:12])	//Decode the instruction. Next state depends on instruction type.
+						`JTYPE:
 						begin
 							state <= 3;
 						end
@@ -143,16 +162,16 @@ module Control(
 				2:	//RTYPE and ITYPE control lines set;
 				begin
 					//TODO: Set control lines for RTYPE and ITYPE instructions
+					alu_from_opcode_or_control <= 1;
 					pc_enable <= 1;
 					write_enable <= 1;
-					reg_read_a <= op[11:8];
-					reg_read_b <= op[3:0];
-					reg_write <= op[11:8];
-					opcode = op;
-					carry_in = saved_flags[0];
+					reg_read_a <= opcode[11:8];
+					reg_read_b <= opcode[3:0];
+					reg_write <= opcode[11:8];
+					carry_in <= saved_flags[0];
 					port_a_we <= 0;
 					c_or_mem_control <= 1;
-					pc_or_b <= 1;
+					pc_or_b_control <= 1;
 					saved_flags <= flags;
 					state <= 0;
 				end
@@ -168,16 +187,16 @@ module Control(
 			begin
 				//if(pc_jmp = 1'b0)
 				//begin
-					pc_counter <= pc_counter + 15'b1;
+					pc <= pc + 15'b1;
 				//end
 				//else
 				//begin
-					//pc_counter <= pc_counter + pc_add_amount
+					//pc <= pc + pc_add_amount
 				//end
 			end
 			else
 			begin
-				pc_counter <= pc_counter;
+				pc <= pc;
 			end
 		end
 	end
