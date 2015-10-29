@@ -127,11 +127,27 @@ module Control(
 
 	always@(posedge clk)
 	begin
+	
+		opcode <= opcode;	//Fetch the instruction from memory
+		state <= 0;
+		pc_enable <= 0;
+		alu_from_opcode_or_control <= 1;
+		write_enable <= 0;
+		reg_read_a <= reg_read_a;
+		reg_read_b <= reg_read_b;
+		reg_write <= reg_write;
+		carry_in <= carry_in;
+		port_a_we <= 0;
+		c_or_mem_control <= 1;
+		pc_or_b_control <= 1;
+		saved_flags <= saved_flags;
+	
 		if(reset_btn)
 		begin
 			reset <= 1;
 			pc <= 0;
 			state <= 0;
+			pc_or_b_control <= 1;
 		end
 		else
 		begin
@@ -146,7 +162,9 @@ module Control(
 			
 				1: //Decode state
 				begin
-					//TODO: Set control lines for decode state
+					reg_read_a <= opcode[11:8];
+					reg_read_b <= opcode[3:0];
+					reg_write <= opcode[11:8];
 					case(opcode[15:12])	//Decode the instruction. Next state depends on instruction type.
 						`JTYPE:
 						begin
@@ -162,16 +180,9 @@ module Control(
 				2:	//RTYPE and ITYPE control lines set;
 				begin
 					//TODO: Set control lines for RTYPE and ITYPE instructions
-					alu_from_opcode_or_control <= 1;
 					pc_enable <= 1;
 					write_enable <= 1;
-					reg_read_a <= opcode[11:8];
-					reg_read_b <= opcode[3:0];
-					reg_write <= opcode[11:8];
 					carry_in <= saved_flags[0];
-					port_a_we <= 0;
-					c_or_mem_control <= 1;
-					pc_or_b_control <= 1;
 					saved_flags <= flags;
 					state <= 0;
 				end
