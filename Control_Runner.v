@@ -43,18 +43,11 @@ module Control_Runner;
 	);
 
 	initial begin
-		reset_btn = 1;
+		reset_btn = 0;
 		clk = 0;
 
 		// Wait 100 ns for global reset to finish
-		
-		#1;
-		clk = 1;
-		#1;
-		clk = 0;
-		#1;
-		reset_btn = 0;
-		#1;
+		#100;
 	end
 	
 	always begin
@@ -63,4 +56,3 @@ module Control_Runner;
 	end
       
 endmodule
-

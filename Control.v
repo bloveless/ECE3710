@@ -122,7 +122,7 @@ module Control(
 	);
 	
 	reg [4:0] saved_flags;
-	reg [1:0] state;
+	reg [3:0] state;
 	reg pc_enable;
 
 	always@(posedge clk)
@@ -141,6 +141,7 @@ module Control(
 		c_or_mem_control <= 1;
 		pc_or_b_control <= 1;
 		saved_flags <= saved_flags;
+		control_to_alu <= 0;
 	
 		if(reset_btn)
 		begin
@@ -170,6 +171,19 @@ module Control(
 						begin
 							state <= 3;
 						end
+						`LOAD:
+						begin
+							pc_or_b_control <= 0;
+							state <= 4;
+						end
+						`STORE:
+						begin
+							pc_or_b_control <= 0;
+							alu_from_opcode_or_control <= 0;
+							control_to_alu <= {`ADDI, reg_read_a, 8'b0};
+							port_a_we <= 1;
+							state <= 6;
+						end
 						default: //RTYPES and ITYPES
 						begin
 							state <= 2;
@@ -192,6 +206,30 @@ module Control(
 					//TODO: Set control lines for JMP instructions
 					//state = 0
 				//end
+				
+				4:	//LOAD state 1
+				begin
+					state <= 5;
+					c_or_mem_control <= 0;
+					write_enable <= 1;
+				end
+				
+				5:	//LOAD state 2
+				begin
+					pc_enable <= 1;
+				end
+				
+				6:	//STORE state 1
+				begin
+					state <= 7;	//Need to wait one cycle for memory address to switch back to PC
+									//or else we will fetch a data value as the next instruction.
+				end
+				
+				7:	//STORE state 2
+				begin
+					pc_enable <= 1;
+					state <= 0;
+				end
 			endcase
 			//PC Counter
 			if(pc_enable == 1'b1)

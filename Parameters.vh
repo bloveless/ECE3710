@@ -50,6 +50,10 @@
  `define SETI					4'b1010
  
  `define JTYPE					4'b0100
+ 
+ `define LOAD					4'b0001
+ 
+ `define STORE					4'b0010
 
  // Easy access to the flags
  `define CARRY_FLAG			0

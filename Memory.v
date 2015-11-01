@@ -35,7 +35,7 @@ module Memory(
 		 
 	reg [15:0] the_memory_core [NUM_RAM_ADDR_BITS:0];
 	
-	initial $readmemb("C:\\Users\\u0812277\\Documents\\GitHub\\ECE3710\\program.mem", the_memory_core);
+	initial $readmemb("C:\\Users\\Nick\\Desktop\\ECE3710\\ECE3710\\program.mem", the_memory_core);
 	
    always @(posedge clk)
 	begin
