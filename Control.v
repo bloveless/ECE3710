@@ -125,18 +125,6 @@ module Control(
 	
 	always@(posedge clk)
 	begin
-		//PC Counter
-		if(pc_enable == 1'b1)
-		begin
-			//if(pc_jmp = 1'b0)
-			//begin
-				pc = pc + 15'b1;
-			//end
-			//else
-			//begin
-				//pc <= pc + pc_add_amount
-			//end
-		end
 		if(state == 0)
 		begin
 			state = 1;
@@ -237,12 +225,25 @@ module Control(
 		endcase
 	end
 	
-	//Register to save flags
+	//Register to save flags and pc counter
 	always@(posedge clk)
 	begin
 		if(save_flags)
 		begin
 			saved_flags = flags;
+		end
+		
+		//PC Counter
+		if(pc_enable == 1'b1)
+		begin
+			//if(pc_jmp = 1'b0)
+			//begin
+				pc = pc + 15'b1;
+			//end
+			//else
+			//begin
+				//pc <= pc + pc_add_amount
+			//end
 		end
 	end
 endmodule
