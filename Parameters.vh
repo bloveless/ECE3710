@@ -54,6 +54,8 @@
  `define LOAD					4'b0001
  
  `define STORE					4'b0010
+ 
+ `define WAIT					4'b0011
 
  // Easy access to the flags
  `define CARRY_FLAG			0

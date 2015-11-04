@@ -122,14 +122,15 @@ module Control(
 	reg save_flags;
 	reg [3:0] state;
 	reg pc_enable;
+	reg [17:0] wait_counter = 0; //19 Bits needed to count to 166,666 (a third of 500,000)
 	
 	always@(posedge clk)
 	begin
-		if(state == 0)
+		if(state == 0)			//Fetch
 		begin
 			state = 1;
 		end
-		else if(state == 1)
+		else if(state == 1)	//Decode
 		begin
 			case(port_a_out[15:12])
 				`JTYPE:
@@ -143,6 +144,10 @@ module Control(
 				`STORE:
 				begin
 					state = 6;
+				end
+				`WAIT:
+				begin
+					state = 7;
 				end
 				default: //RTYPES and ITYPES
 				begin
@@ -173,10 +178,11 @@ module Control(
 		reg_read_a = port_a_out[11:8];
 		reg_read_b = port_a_out[3:0];
 		save_flags = 0;
+		wait_counter = wait_counter;
 		
 		case(state)
 			0:	//Fetch state
-			begin	
+			begin
 			end
 		
 			1: //Decode state
@@ -217,6 +223,19 @@ module Control(
 				pc_or_b_control = 0;
 				port_a_we = 1;
 				pc_enable = 1;
+			end
+			
+			7:
+			begin
+				if(wait_counter == 18'd166666)
+				begin
+					wait_counter = 0;
+					pc_enable = 1;
+				end
+				else
+				begin
+					wait_counter = wait_counter + 1;
+				end
 			end
 			default:
 			begin
