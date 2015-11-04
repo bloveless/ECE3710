@@ -50,6 +50,8 @@
  `define SETI					4'b1010
  
  `define JTYPE					4'b0100
+ 
+ `define WAIT					4'b0011
 
  // Easy access to the flags
  `define CARRY_FLAG			0
@@ -58,5 +60,7 @@
  `define ZERO_FLAG			3
  `define NEG_FLAG				4
  `define INVALID_OP_FLAG	5
+ 
+ 
 
 `endif
