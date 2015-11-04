@@ -31,7 +31,7 @@ module Control(
 	// Allow 16 bits so we can address peripherals
 	// If the 16th bit is 1 we select from a peripheral
 	// If it is 0 we are reading from memory
-	reg [15:0] pc = 16'b0;
+	reg [14:0] pc = 15'b0;
 	
    reg reset;
 	
@@ -50,8 +50,6 @@ module Control(
 	// ALU
 	reg [15:0] a;
    reg [15:0] b;
-   reg [15:0] opcode;
-	reg        carry_in;
 	
 	
 	/* Outputs */
@@ -72,7 +70,12 @@ module Control(
 	
 	reg pc_or_b_control;		//Mux control line
 	wire [14:0] pc_or_b;				//Mux output
-	assign pc_or_b = pc_or_b_control ? pc : reg_b;
+	assign pc_or_b = pc_or_b_control ? pc : reg_b[14:0];
+	
+	reg alu_from_opcode_or_control;
+	wire [15:0] alu_in;
+	reg [15:0] control_to_alu;
+	assign alu_in = alu_from_opcode_or_control ? port_a_out : control_to_alu;
 
 	Memory memory (
 		.port_a_address(pc_or_b),
@@ -105,148 +108,141 @@ module Control(
 		.enable(enable),
 		.leds(leds)
 	);
-	
-	reg alu_from_opcode_or_control;
-	wire [15:0] alu_in;
-	reg [15:0] control_to_alu;
-	assign alu_in = alu_from_opcode_or_control ? opcode : control_to_alu;
-	
-	
+		
 	ALU alu (
 	   .a(reg_a),
 		.b(reg_b),
 		.opcode(alu_in),
-		.carry_in(carry_in),
+		.carry_in(saved_flags[0]),
 		.c(c),
 		.flags(flags)
 	);
 	
 	reg [4:0] saved_flags;
+	reg save_flags;
 	reg [3:0] state;
 	reg pc_enable;
-
+	
 	always@(posedge clk)
 	begin
-	
-		opcode <= opcode;	//Fetch the instruction from memory
-		state <= 0;
-		pc_enable <= 0;
-		alu_from_opcode_or_control <= 1;
-		write_enable <= 0;
-		reg_read_a <= reg_read_a;
-		reg_read_b <= reg_read_b;
-		reg_write <= reg_write;
-		carry_in <= carry_in;
-		port_a_we <= 0;
-		c_or_mem_control <= 1;
-		pc_or_b_control <= 1;
-		saved_flags <= saved_flags;
-		control_to_alu <= 0;
-	
-		if(reset_btn)
+		//PC Counter
+		if(pc_enable == 1'b1)
 		begin
-			reset <= 1;
-			pc <= 0;
-			state <= 0;
-			pc_or_b_control <= 1;
+			//if(pc_jmp = 1'b0)
+			//begin
+				pc = pc + 15'b1;
+			//end
+			//else
+			//begin
+				//pc <= pc + pc_add_amount
+			//end
+		end
+		if(state == 0)
+		begin
+			state = 1;
+		end
+		else if(state == 1)
+		begin
+			case(port_a_out[15:12])
+				`JTYPE:
+				begin
+					state = 3;
+				end
+				`LOAD:
+				begin
+					state = 4;
+				end
+				`STORE:
+				begin
+					state = 6;
+				end
+				default: //RTYPES and ITYPES
+				begin
+					state = 2;
+				end
+			endcase
+		end
+		else if(state == 4)
+		begin
+			state = 5;
 		end
 		else
 		begin
-			reset <= 0;
-			case(state)
-				0:	//Fetch state
-				begin
-					//TODO: Set control lines for fetch state
-					opcode <= port_a_out;	//Fetch the instruction from memory
-					state <= 1;
-				end
+			state = 0;
+		end
+	end
+
+	always@(state)
+	begin
+		pc_enable = 0;
+		alu_from_opcode_or_control = 1;
+		write_enable = 0;
+		port_a_we = 0;
+		c_or_mem_control = 1;
+		pc_or_b_control = 1;
+		control_to_alu = 0;
+		reg_write = port_a_out[11:8];
+		reg_read_a = port_a_out[11:8];
+		reg_read_b = port_a_out[3:0];
+		save_flags = 0;
+		
+		case(state)
+			0:	//Fetch state
+			begin	
+			end
+		
+			1: //Decode state
+			begin
+			end
 			
-				1: //Decode state
-				begin
-					reg_read_a <= opcode[11:8];
-					reg_read_b <= opcode[3:0];
-					reg_write <= opcode[11:8];
-					case(opcode[15:12])	//Decode the instruction. Next state depends on instruction type.
-						`JTYPE:
-						begin
-							state <= 3;
-						end
-						`LOAD:
-						begin
-							pc_or_b_control <= 0;
-							state <= 4;
-						end
-						`STORE:
-						begin
-							pc_or_b_control <= 0;
-							alu_from_opcode_or_control <= 0;
-							control_to_alu <= {`ADDI, reg_read_a, 8'b0};
-							port_a_we <= 1;
-							state <= 6;
-						end
-						default: //RTYPES and ITYPES
-						begin
-							state <= 2;
-						end
-					endcase
-				end
-				
-				2:	//RTYPE and ITYPE control lines set;
-				begin
-					//TODO: Set control lines for RTYPE and ITYPE instructions
-					pc_enable <= 1;
-					write_enable <= 1;
-					carry_in <= saved_flags[0];
-					saved_flags <= flags;
-					state <= 0;
-				end
-				
-				//3: //Future jmp type state
-				//begin
-					//TODO: Set control lines for JMP instructions
-					//state = 0
-				//end
-				
-				4:	//LOAD state 1
-				begin
-					state <= 5;
-					c_or_mem_control <= 0;
-					write_enable <= 1;
-				end
-				
-				5:	//LOAD state 2
-				begin
-					pc_enable <= 1;
-				end
-				
-				6:	//STORE state 1
-				begin
-					state <= 7;	//Need to wait one cycle for memory address to switch back to PC
-									//or else we will fetch a data value as the next instruction.
-				end
-				
-				7:	//STORE state 2
-				begin
-					pc_enable <= 1;
-					state <= 0;
-				end
-			endcase
-			//PC Counter
-			if(pc_enable == 1'b1)
+			2:	//RTYPE and ITYPE control lines set;
 			begin
-				//if(pc_jmp = 1'b0)
-				//begin
-					pc <= pc + 15'b1;
-				//end
-				//else
-				//begin
-					//pc <= pc + pc_add_amount
-				//end
+				//TODO: Set control lines for RTYPE and ITYPE instructions
+				pc_enable = 1;
+				write_enable = 1;
+				save_flags = 1;
 			end
-			else
+			
+			//3: //Future jmp type state
+			//begin
+				//TODO: Set control lines for JMP instructions
+				//state = 0
+			//end
+			
+			4:	//LOAD state 1
 			begin
-				pc <= pc;
+				pc_or_b_control = 0;
+				reg_write = reg_write;
 			end
+			
+			5:	//LOAD state 2
+			begin
+				pc_enable = 1;
+				c_or_mem_control = 0;
+				write_enable = 1;
+			end
+			
+			6:	//STORE state 1
+			begin
+				control_to_alu = {`ADDI, port_a_out[11:8], 8'b0};
+				alu_from_opcode_or_control = 0;
+				pc_or_b_control = 0;
+				port_a_we = 1;
+				pc_enable = 1;
+			end
+			default:
+			begin
+				//default
+			end
+		endcase
+	end
+	
+	//Register to save flags
+	always@(posedge clk)
+	begin
+		if(save_flags)
+		begin
+			saved_flags = flags;
 		end
 	end
 endmodule
