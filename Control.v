@@ -31,7 +31,7 @@ module Control(
 	// Allow 16 bits so we can address peripherals
 	// If the 16th bit is 1 we select from a peripheral
 	// If it is 0 we are reading from memory
-	reg [14:0] pc = 15'b0;
+	reg [14:0] pc = 15'b111111111111111;
 	
    reg reset;
 	
@@ -249,7 +249,7 @@ module Control(
 	begin
 		if(save_flags)
 		begin
-			saved_flags = flags;
+			saved_flags <= flags;
 		end
 		
 		//PC Counter
@@ -257,7 +257,7 @@ module Control(
 		begin
 			//if(pc_jmp = 1'b0)
 			//begin
-				pc = pc + 15'b1;
+				pc <= pc - 15'b1;
 			//end
 			//else
 			//begin

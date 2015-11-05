@@ -65,3 +65,4 @@
 //we want to store $R0 into the location of $r15
 @7FF6 0010_0000_0000_1111
 //memory is now at 1 1 2 3 5 8 13
+
