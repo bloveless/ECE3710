@@ -79,7 +79,7 @@ module Control(
 
 	Memory memory (
 		.port_a_address(pc_or_b),
-		.port_b_address(port_b_address),
+		.port_b_address(0),
 		.port_a_in(c),
 		.port_b_in(port_b_in),
 		.port_a_we(port_a_we),
@@ -102,7 +102,7 @@ module Control(
 	);
 	
 	BCD_To_7Seg bcd (
-		.binary(c),
+		.binary(port_b_out),
 		.clk(clk),
 		.seven_segment(seven_segment),
 		.enable(enable),
@@ -123,45 +123,48 @@ module Control(
 	reg [3:0] state;
 	reg pc_enable;
 	reg [17:0] wait_counter = 0; //19 Bits needed to count to 166,666 (a third of 500,000)
+	reg pc_jmp;
+	reg pc_brch;
+	reg [11:0] milliseconds = 0;
 	
 	always@(posedge clk)
 	begin
 		if(state == 0)			//Fetch
 		begin
-			state = 1;
+			state <= 1;
 		end
 		else if(state == 1)	//Decode
 		begin
 			case(port_a_out[15:12])
 				`JTYPE:
 				begin
-					state = 3;
+					state <= 3;
 				end
 				`LOAD:
 				begin
-					state = 4;
+					state <= 4;
 				end
 				`STORE:
 				begin
-					state = 6;
+					state <= 6;
 				end
 				`WAIT:
 				begin
-					state = 7;
+					state <= 7;
 				end
 				default: //RTYPES and ITYPES
 				begin
-					state = 2;
+					state <= 2;
 				end
 			endcase
 		end
 		else if(state == 4)
 		begin
-			state = 5;
+			state <= 5;
 		end
 		else
 		begin
-			state = 0;
+			state <= 0;
 		end
 	end
 
@@ -169,6 +172,7 @@ module Control(
 	begin
 		pc_enable = 0;
 		alu_from_opcode_or_control = 1;
+		control_to_alu = 0;
 		write_enable = 0;
 		port_a_we = 0;
 		c_or_mem_control = 1;
@@ -179,6 +183,8 @@ module Control(
 		reg_read_b = port_a_out[3:0];
 		save_flags = 0;
 		wait_counter = wait_counter;
+		pc_jmp = 0;
+		pc_brch = 0;
 		
 		case(state)
 			0:	//Fetch state
@@ -197,11 +203,13 @@ module Control(
 				save_flags = 1;
 			end
 			
-			//3: //Future jmp type state
-			//begin
-				//TODO: Set control lines for JMP instructions
-				//state = 0
-			//end
+			3: //JMP state
+			begin
+				pc_enable = 1;
+				pc_jmp = 1;
+				alu_from_opcode_or_control = 0;
+				control_to_alu = {`ADDI, port_a_out[11:8], 8'b0};
+			end
 			
 			4:	//LOAD state 1
 			begin
@@ -229,8 +237,17 @@ module Control(
 			begin
 				if(wait_counter == 18'd166666)
 				begin
-					wait_counter = 0;
-					pc_enable = 1;
+					milliseconds = milliseconds + 1;
+					if(milliseconds == port_a_out[11:0])
+					begin
+						wait_counter = 0;
+						milliseconds = 0;
+						pc_enable = 1;
+					end
+					else
+					begin
+						wait_counter = 0;
+					end
 				end
 				else
 				begin
@@ -255,14 +272,18 @@ module Control(
 		//PC Counter
 		if(pc_enable == 1'b1)
 		begin
-			//if(pc_jmp = 1'b0)
-			//begin
+			if(pc_jmp == 1'b1)
+			begin
+				pc <= c;
+			end
+			else if(pc_brch == 1'b1)
+			begin
+				pc <= pc + c;
+			end
+			else
+			begin
 				pc <= pc - 15'b1;
-			//end
-			//else
-			//begin
-				//pc <= pc + pc_add_amount
-			//end
+			end
 		end
 	end
 endmodule
