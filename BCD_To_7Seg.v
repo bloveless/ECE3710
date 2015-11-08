@@ -136,7 +136,7 @@ module BCD_To_7Seg(
 			4'b1011:
 			begin
 				//B
-				seven_segment = 7'b0000000;
+				seven_segment = 7'b1100000;
 			end
 			4'b1100:
 			begin
@@ -146,7 +146,7 @@ module BCD_To_7Seg(
 			4'b1101:
 			begin
 				//D
-				seven_segment = 7'b0000001;
+				seven_segment = 7'b1000010;
 			end
 			4'b1110:
 			begin

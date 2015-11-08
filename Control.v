@@ -79,7 +79,7 @@ module Control(
 
 	Memory memory (
 		.port_a_address(pc_or_b),
-		.port_b_address(0),
+		.port_b_address(15'b0),
 		.port_a_in(c),
 		.port_b_in(port_b_in),
 		.port_a_we(port_a_we),
@@ -126,6 +126,8 @@ module Control(
 	reg pc_jmp;
 	reg pc_brch;
 	reg [11:0] milliseconds = 0;
+	reg wait_enable = 0;
+	reg wait_reset = 0;
 	
 	always@(posedge clk)
 	begin
@@ -182,9 +184,10 @@ module Control(
 		reg_read_a = port_a_out[11:8];
 		reg_read_b = port_a_out[3:0];
 		save_flags = 0;
-		wait_counter = wait_counter;
 		pc_jmp = 0;
 		pc_brch = 0;
+		wait_enable = 0;
+		wait_reset = 0;
 		
 		case(state)
 			0:	//Fetch state
@@ -235,23 +238,14 @@ module Control(
 			
 			7:
 			begin
-				if(wait_counter == 18'd166666)
+				if(milliseconds == port_a_out[11:0])
 				begin
-					milliseconds = milliseconds + 1;
-					if(milliseconds == port_a_out[11:0])
-					begin
-						wait_counter = 0;
-						milliseconds = 0;
-						pc_enable = 1;
-					end
-					else
-					begin
-						wait_counter = 0;
-					end
+					pc_enable = 1;
+					wait_reset = 1;
 				end
 				else
 				begin
-					wait_counter = wait_counter + 1;
+					wait_enable = 1;
 				end
 			end
 			default:
@@ -283,6 +277,28 @@ module Control(
 			else
 			begin
 				pc <= pc - 15'b1;
+			end
+		end
+	end
+	
+	//Wait counter
+	always@(posedge clk)
+	begin
+		if(wait_reset == 1)
+		begin
+			milliseconds <= 0;
+			wait_counter <= 0;
+		end
+		else if(wait_enable == 1)
+		begin
+			if(wait_counter == 18'd166666)
+			begin
+				wait_counter <= 0;
+				milliseconds <= milliseconds + 1;
+			end
+			else
+			begin
+				wait_counter <= wait_counter + 1;
 			end
 		end
 	end
