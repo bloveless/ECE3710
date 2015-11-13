@@ -22,7 +22,7 @@
 
 module Control(
 		input reset_btn,
-		input clk,
+		input in_clk,
 		output [6:0] seven_segment,
 		output [3:0] enable,
 		output [3:0] leds
@@ -34,6 +34,8 @@ module Control(
 	reg [14:0] pc = 15'b111111111111111;
 	
    reg reset;
+	
+	wire clk;
 	
 	/* Inputs */
 	// Memory
@@ -76,6 +78,11 @@ module Control(
 	wire [15:0] alu_in;
 	reg [15:0] control_to_alu;
 	assign alu_in = alu_from_opcode_or_control ? port_a_out : control_to_alu;
+
+	DCM dcm (
+		.CLK_IN1(in_clk),
+		.CLK_OUT1(clk)
+	);
 
 	Memory memory (
 		.port_a_address(pc_or_b),
