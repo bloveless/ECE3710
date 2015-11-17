@@ -25,7 +25,15 @@ module Control(
 		input in_clk,
 		output [6:0] seven_segment,
 		output [3:0] enable,
-		output [3:0] leds
+		output [3:0] leds,
+		output [7:0] tft_r,	//Red		A12, B12, A13, C13, A14, B14, F13, E13
+		output [7:0] tft_g,	//Green  C8,  D8,  B9,  A9,  F9,  A11, G9,  B11
+		output [7:0] tft_b,	//Blue	A4,  A5,  B4,  C5,  A6,  B6,  A7,  C7
+		output tft_clk,			//clk to lcd. Should be 9.1 MHz	C10
+		output tft_display, 	//High to turn on backlight (Should always be high)	C15
+		output led_en,			//Screen brightness with PWM. Pulse 5 kHz for max brightness	C14
+		output tft_en,			//Set low for sleep state. Should always be high.	D14
+		output tft_de			//Set high for each row of pixels. Set low between rows.	A15
    );
 	
 	// Allow 16 bits so we can address peripherals
@@ -39,7 +47,7 @@ module Control(
 	
 	/* Inputs */
 	// Memory
-   reg [14:0] port_b_address;
+   wire [14:0] port_b_address;
    reg [15:0] port_b_in;
    reg        port_a_we;
    reg        port_b_we;
@@ -78,7 +86,7 @@ module Control(
 	wire [15:0] alu_in;
 	reg [15:0] control_to_alu;
 	assign alu_in = alu_from_opcode_or_control ? port_a_out : control_to_alu;
-
+	
 	DCM dcm (
 		.CLK_IN1(in_clk),
 		.CLK_OUT1(clk)
@@ -86,7 +94,7 @@ module Control(
 
 	Memory memory (
 		.port_a_address(pc_or_b),
-		.port_b_address(15'b0),
+		.port_b_address(port_b_address),
 		.port_a_in(c),
 		.port_b_in(port_b_in),
 		.port_a_we(port_a_we),
@@ -94,6 +102,20 @@ module Control(
 		.clk(clk),
 		.port_a_out(port_a_out),
 		.port_b_out(port_b_out)
+	);
+	
+	LCD_Controller lcd (
+		.port_b_out(port_b_out),
+		.clk(clk),
+		.port_b_address(port_b_address),
+		.tft_r(tft_r),
+		.tft_g(tft_g),
+		.tft_b(tft_b),
+		.tft_clk(tft_clk),
+		.tft_display(tft_display),
+		.led_en(led_en),
+		.tft_en(tft_en),
+		.tft_de(tft_de)
 	);
 	
 	Register_File reg_file (
@@ -129,7 +151,7 @@ module Control(
 	reg save_flags;
 	reg [3:0] state;
 	reg pc_enable;
-	reg [17:0] wait_counter = 0; //19 Bits needed to count to 166,666 (a third of 500,000)
+	reg [15:0] wait_counter = 0; //16 Bits needed to count to 33,333 (a third of 100,000)
 	reg pc_jmp;
 	reg pc_brch;
 	reg [11:0] milliseconds = 0;
@@ -298,7 +320,7 @@ module Control(
 		end
 		else if(wait_enable == 1)
 		begin
-			if(wait_counter == 18'd166666)
+			if(wait_counter == 16'd33333)
 			begin
 				wait_counter <= 0;
 				milliseconds <= milliseconds + 1;
