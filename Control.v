@@ -280,7 +280,7 @@ module Control(
 			end
 			else if(pc_brch == 1'b1)
 			begin
-				pc <= pc - c;
+				pc <= pc + c;
 			end
 			else
 			begin
