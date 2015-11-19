@@ -255,6 +255,7 @@ module Control(
 			8: //BRANCH
 			begin
 				pc_enable = 1;
+				pc_brch=1;
 			end
 			default:
 			begin
