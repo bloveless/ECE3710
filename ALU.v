@@ -210,7 +210,7 @@ module ALU (
 			begin
 				if( $signed(a) < $signed(b) )
 					begin
-					c = opcode[7:0];
+					c = opcode[3:0];
 					end
 				else 
 					begin
