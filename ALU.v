@@ -206,6 +206,112 @@ module ALU (
 				flags = 5'b00000;
 			end
 			
+			`BLT:
+			begin
+				if( $signed(a) < $signed(b) )
+					begin
+					c = opcode[7:0];
+					end
+				else 
+					begin
+					c = 0;
+					end
+				flags = 5'b00000;
+			end
+			
+			
+			//This branch uses a modifier to branch. The use of the modfier has many of the same effects as 
+			//pseudo branch instructions except that BRANCH_IF relies on the setting of flags
+			//[opCode 15:11, Modifier 10:8, Address 7:0]
+			//Modifiers:
+			//	EQ [000] Equal Z=1
+			//	NE [001] Not Equal Z=0
+			//	LS [010] lower or same C=0 Z=1
+			// HS [011] higher or same C=1
+			// VS [100] overflow V=1
+			// HI	[101] Higher C=1 Z=0
+			// CC [110] Lower C=0
+			// AL [111] DEFAULT branch on anything
+			
+			//A note on all of the branch instructions. Can only branch within the range of 
+			//the 4 LSB of the PC counter
+			//Branching is an immediate instruction with only 8 bits
+			//It takes the first 8 bits of the PC counter and replaces the last 8 bits with the immediate value
+			
+			/*// Easy access to the flags
+			`define CARRY_FLAG		0 C
+			`define LOW_FLAG			1 Compare if A<B not found in ARM 
+			`define FLAG_FLAG			2 Overflow V
+			`define ZERO_FLAG			3 Z
+			`define NEG_FLAG			4 N
+			`define INVALID_OP_FLAG	5*/
+			
+			/*`BRANCH_IF:
+				begin 
+				case(opcode[10:8])
+				begin
+					`EQ:
+						begin
+							c = 15'b
+						end
+					`NE:
+						begin
+					
+						end
+					`LS:
+						begin
+					
+						end
+					`HS:
+						begin
+					
+						end
+					`VS:
+						begin
+						
+						end
+					`HI:
+						begin
+						
+						end
+					`CC:
+						begin
+						
+						end
+					`AL 
+						begin
+						
+						end
+				endcase
+			end
+			*/
+			
+			//Branch less than
+		
+			/*Branch greater than
+			`BGT:
+			begin
+			
+			end
+	
+			//Branch less than or equal
+			`BLE:
+			begin
+			
+			end
+			
+			//Branch greater than or equal
+			`BGE:
+			begin
+			
+			end
+			
+			//Place holder for the radio send
+			`SEND_DATA:
+			begin
+			
+			end
+			*/
 			default:
 			begin
 			

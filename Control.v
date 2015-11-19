@@ -154,6 +154,10 @@ module Control(
 				begin
 					state <= 7;
 				end
+				`BLT:
+				begin
+					state <= 8;
+				end
 				default: //RTYPES and ITYPES
 				begin
 					state <= 2;
@@ -247,6 +251,10 @@ module Control(
 				begin
 					wait_enable = 1;
 				end
+			end
+			8: //BRANCH
+			begin
+				pc_enable = 1;
 			end
 			default:
 			begin
