@@ -206,19 +206,6 @@ module ALU (
 				flags = 5'b00000;
 			end
 			
-			`BLT:
-			begin
-				if( $signed(a) < $signed(b) )
-					begin
-					c = opcode[3:0];
-					end
-				else 
-					begin
-					c = 0;
-					end
-				flags = 5'b00000;
-			end
-			
 			
 			//This branch uses a modifier to branch. The use of the modfier has many of the same effects as 
 			//pseudo branch instructions except that BRANCH_IF relies on the setting of flags
@@ -242,68 +229,34 @@ module ALU (
 			`define CARRY_FLAG		0 C
 			`define LOW_FLAG			1 Compare if A<B not found in ARM 
 			`define FLAG_FLAG			2 Overflow V
-			`define ZERO_FLAG			3 Z
-			`define NEG_FLAG			4 N
+			`define ZERO_FLAG			3 Z set when result is 0
+			`define NEG_FLAG			4 N set when result is negative
 			`define INVALID_OP_FLAG	5*/
 			
-			/*`BRANCH_IF:
-				begin 
-				case(opcode[10:8])
-				begin
-					`EQ:
-						begin
-							c = 15'b
-						end
-					`NE:
-						begin
-					
-						end
-					`LS:
-						begin
-					
-						end
-					`HS:
-						begin
-					
-						end
-					`VS:
-						begin
-						
-						end
-					`HI:
-						begin
-						
-						end
-					`CC:
-						begin
-						
-						end
-					`AL 
-						begin
-						
-						end
-				endcase
-			end
-			*/
 			
 			//Branch less than
 		
 			/*Branch greater than
-			`BGT:
+			`BLT:
 			begin
-			
+			 if(LOW_FLAG == 1'b1) c=opcode[11:0];
+			 if(NEG_FLAG == 1'b1) c=opcode[11:0];
+			 else c =0;
 			end
 	
-			//Branch less than or equal
-			`BLE:
+			//Branch greater than
+			`BGT:
 			begin
-			
+			 if((LOW_FLAG == 1'b0) && (ZERRO_FLAG == 1'b0)) c=opcode[11:0];
+			 if((NEG_FLAG == 1'b0) && (ZERRO_FLAG == 1'b0)) c=opcode[11:0];
+			 else c =0;
 			end
 			
-			//Branch greater than or equal
-			`BGE:
+			//Branch equal
+			`BEQ:
 			begin
-			
+			if((ZERRO_FLAG == 1'b1)) c=opcode[11:0];
+			else c =0;
 			end
 			
 			//Place holder for the radio send
