@@ -3,9 +3,9 @@
 // Company: 
 // Engineer: 
 // 
-// Create Date:    15:59:18 11/12/2015 
+// Create Date:    15:49:25 11/19/2015 
 // Design Name: 
-// Module Name:    LCD_Controller 
+// Module Name:    LCD_Control 
 // Project Name: 
 // Target Devices: 
 // Tool versions: 
@@ -19,128 +19,108 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 module LCD_Controller(
-    input [15:0] port_b_out,
 	 input clk,
-    output reg [14:0] port_b_address,
-	 output reg [7:0] tft_r,	//Red		A12, B12, A13, C13, A14, B14, F13, E13
-	 output reg [7:0] tft_g,	//Green  C8,  D8,  B9,  A9,  F9,  A11, G9,  B11
-	 output reg [7:0] tft_b,	//Blue	A4,  A5,  B4,  C5,  A6,  B6,  A7,  C7
-	 output reg tft_clk,			//clk to lcd. Should be 9.1 MHz	C10
-	 output reg tft_display, 	//High to turn on backlight (Should always be high)	C15
-	 output reg led_en,			//Screen brightness with PWM. Pulse 5 kHz for max brightness	C14
-	 output reg tft_en,			//Set low for sleep state. Should always be high.	D14
-	 output reg tft_de			//Set high for each row of pixels. Set low between rows.	A15
+    input NineMHz,
+    output reg [7:0] red,
+    output reg[7:0] green,
+    output reg [7:0] blue,
+	 output tft_clk,
+	 output reg tft_display,
+	 output reg led_en,
+	 output reg tft_en,
+	 output tft_de
     );
-	
+
 	initial
 	begin
-		port_b_address = 0;
-		tft_r = 8'b11111111;
-		tft_g = 8'b11111111;
-		tft_b = 8'b11111111;
-		tft_clk = 0;
+		red = 8'b00000000;
+		green = 8'b11111111;
+		blue = 8'b00000000;
 		tft_display = 0;
+		tft_en = 1;
 		led_en = 0;
-		tft_en = 0;
-		tft_de = 0;
 	end
+
+	reg [24:0] start_up_counter = 0;
+	reg state = 0;
+	reg [9:0]  h = 0;		//Horizontal pixel count that includes porches
+	reg [8:0]  v = 0;		//Vertical pixel count that includes porches
+	wire [9:0] h_count;	//Horizontal pixel count w/out porches (use this for glyph calculation)
+	wire [8:0] v_count;	//Vertical pixel count w/out porches (use this for glyph calculation)
+	reg clk_enable = 0;
+	reg clk_high = 0;
 	
-	reg [3:0]  nine_mhz_count = 0;
-	reg [10:0] fifty_khz_count = 0;
-	reg        power_up_state = 1;
-	reg [24:0] power_up_clk = 0;
-	reg [9:0]  h_count = 0;
-	reg [8:0]  v_count = 0;
+	assign h_count = h - 10'd44;
+	assign v_count = v - 9'd16;
 	
-	reg de_control_1 = 0;
-	reg de_control_2 = 1;
-	always@(*)
+	assign tft_clk = (NineMHz & clk_enable) | clk_high;
+	reg de1 = 0;
+	reg de2 = 1;
+	assign tft_de = de1 & de2;
+
+	always@(posedge(clk))
 	begin
-		tft_de = de_control_1 & de_control_2;
-	end
-	
-	//Run power-up then let tft_clk run at 9kHz and led_en run at 50kHz
-	always@(clk)
-	begin
-		if(power_up_state == 0)
+		if(state == 0)
 		begin
-			//Run 9 MHz singal
-			if(nine_mhz_count == 4'd11)
+			if(start_up_counter == 25'd5000000)
 			begin
-				nine_mhz_count = 0;
-				tft_clk = ~tft_clk;
-			end
-			else
-			begin
-				nine_mhz_count = nine_mhz_count + 1;
-			end
-			
-			//Run 50 kHz signal
-			if(fifty_khz_count == 11'd2000)
-			begin
-				fifty_khz_count = 0;
-				led_en = ~led_en;
-			end
-			else
-			begin
-				fifty_khz_count = fifty_khz_count + 1;
-			end
-		end
-		//Run start up sequence
-		else
-		begin
-			if(power_up_clk == 0)
-			begin
-				tft_en = 1;
-				power_up_clk = power_up_clk + 1;
-			end
-			else if(power_up_clk == 25'd10000)
-			begin
-				de_control_1 = 1;
-				tft_clk = 1;
+				clk_high = 1;
 				tft_display = 1;
-				power_up_clk = power_up_clk + 1;
+				de1 = 1;
 			end
-			else if(power_up_clk == 25'd32010000)
+			else if(start_up_counter == 25'd21000000)
 			begin
 				led_en = 1;
-				power_up_state = 0;
+				state = 1;
 			end
-			else
-			begin
-				power_up_clk = power_up_clk + 1;
-			end
+			start_up_counter = start_up_counter + 1;
+		end
+		else
+		begin
+			clk_enable = 1;
+			clk_high = 0;
 		end
 	end
 	
-	//Control row and pixel color here
-	always@(posedge tft_clk)
+	always@(posedge(NineMHz))
 	begin
-		if(power_up_state == 0)
+		if(state == 1)
 		begin
-			if(h_count == 10'd524)
+			if(h == 10'd524)
 			begin
-				h_count = 0;
-				if(v_count == 9'd287)
+				h = 0;
+				if(v == 9'd287)
 				begin
-					v_count = 0;
+					v = 0;
 				end
 				else
 				begin
-					v_count = v_count + 1;
+					v = v + 1;
 				end
 			end
 			else
 			begin
-				h_count = h_count + 1;
+				h = h + 1;
 			end
-			if((h_count >= 10'd45) && (v_count >= 9'd16))
+			if((h >= 10'd45) && (v >= 9'd16))
 			begin
-				de_control_2 = 1;
+				de2 = 1;
 			end
 			else
 			begin
-				de_control_2 = 0;
+				de2 = 0;
+			end
+			if(h_count == 10'd0 || v_count == 9'd0)
+			begin
+				red = 8'b00000000;
+				green = 8'b11111111;
+				blue = 8'b00000000;
+			end
+			else
+			begin
+				red = 8'b11111111;
+				green = 8'b00000000;
+				blue = 8'b00000000;
 			end
 		end
 	end

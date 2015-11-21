@@ -26,9 +26,9 @@ module Control(
 		output [6:0] seven_segment,
 		output [3:0] enable,
 		output [3:0] leds,
-		output [7:0] tft_r,	//Red		A12, B12, A13, C13, A14, B14, F13, E13
-		output [7:0] tft_g,	//Green  C8,  D8,  B9,  A9,  F9,  A11, G9,  B11
-		output [7:0] tft_b,	//Blue	A4,  A5,  B4,  C5,  A6,  B6,  A7,  C7
+		output [7:0] red,	//Red		A12, B12, A13, C13, A14, B14, F13, E13
+		output [7:0] green,	//Green  C8,  D8,  B9,  A9,  F9,  A11, G9,  B11
+		output [7:0] blue,	//Blue	A4,  A5,  B4,  C5,  A6,  B6,  A7,  C7
 		output tft_clk,			//clk to lcd. Should be 9.1 MHz	C10
 		output tft_display, 	//High to turn on backlight (Should always be high)	C15
 		output led_en,			//Screen brightness with PWM. Pulse 5 kHz for max brightness	C14
@@ -91,7 +91,7 @@ module Control(
 		.CLK_IN1(in_clk),
 		.CLK_OUT1(clk)
 	);
-
+	
 	Memory memory (
 		.port_a_address(pc_or_b),
 		.port_b_address(port_b_address),
@@ -104,13 +104,19 @@ module Control(
 		.port_b_out(port_b_out)
 	);
 	
-	LCD_Controller lcd (
-		.port_b_out(port_b_out),
+	wire NineMHz;
+
+	Clock_Divider dvdr (
 		.clk(clk),
-		.port_b_address(port_b_address),
-		.tft_r(tft_r),
-		.tft_g(tft_g),
-		.tft_b(tft_b),
+		.NineMHz(NineMHz)
+	);
+	
+	LCD_Controller lcd (
+		.clk(clk),
+		.NineMHz(NineMHz),
+		.red(red),
+		.green(green),
+		.blue(blue),
 		.tft_clk(tft_clk),
 		.tft_display(tft_display),
 		.led_en(led_en),
