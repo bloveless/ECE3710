@@ -105,6 +105,8 @@ module Control(
 	);
 	
 	wire NineMHz;
+	wire [9:0] h_count;
+	wire [8:0] v_count;
 
 	Clock_Divider dvdr (
 		.clk(clk),
@@ -114,14 +116,23 @@ module Control(
 	LCD_Controller lcd (
 		.clk(clk),
 		.NineMHz(NineMHz),
-		.red(red),
-		.green(green),
-		.blue(blue),
 		.tft_clk(tft_clk),
 		.tft_display(tft_display),
 		.led_en(led_en),
 		.tft_en(tft_en),
-		.tft_de(tft_de)
+		.tft_de(tft_de),
+		.h_count(h_count),
+		.v_count(v_count)
+	);
+	
+	Bit_Gen bg (
+		.h_count(h_count),
+		.v_count(v_count),
+		.port_b_address(port_b_address),
+		.port_b_out(port_b_out),
+		.red(red),
+		.green(green),
+		.blue(blue)
 	);
 	
 	Register_File reg_file (

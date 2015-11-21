@@ -24,6 +24,9 @@
 `ifndef _parameters_vh
 `define _parameters_vh
  
+ //Frequency of DCM output
+ `define FREQ					75
+ 
  // All the available operations
  `define NOOP					16'b0
  

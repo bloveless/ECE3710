@@ -21,21 +21,17 @@
 module LCD_Controller(
 	 input clk,
     input NineMHz,
-    output reg [7:0] red,
-    output reg[7:0] green,
-    output reg [7:0] blue,
 	 output tft_clk,
 	 output reg tft_display,
 	 output reg led_en,
 	 output reg tft_en,
-	 output tft_de
+	 output tft_de,
+	 output [9:0] h_count,
+	 output [8:0] v_count
     );
 
 	initial
 	begin
-		red = 8'b00000000;
-		green = 8'b11111111;
-		blue = 8'b00000000;
 		tft_display = 0;
 		tft_en = 1;
 		led_en = 0;
@@ -50,7 +46,7 @@ module LCD_Controller(
 	reg clk_enable = 0;
 	reg clk_high = 0;
 	
-	assign h_count = h - 10'd44;
+	assign h_count = h - 10'd45;
 	assign v_count = v - 9'd16;
 	
 	assign tft_clk = (NineMHz & clk_enable) | clk_high;
@@ -62,13 +58,13 @@ module LCD_Controller(
 	begin
 		if(state == 0)
 		begin
-			if(start_up_counter == 25'd5000000)
+			if(start_up_counter == 25'd3750000)
 			begin
 				clk_high = 1;
 				tft_display = 1;
 				de1 = 1;
 			end
-			else if(start_up_counter == 25'd21000000)
+			else if(start_up_counter == 25'd15750000)
 			begin
 				led_en = 1;
 				state = 1;
@@ -109,18 +105,6 @@ module LCD_Controller(
 			else
 			begin
 				de2 = 0;
-			end
-			if(h_count == 10'd0 || v_count == 9'd0)
-			begin
-				red = 8'b00000000;
-				green = 8'b11111111;
-				blue = 8'b00000000;
-			end
-			else
-			begin
-				red = 8'b11111111;
-				green = 8'b00000000;
-				blue = 8'b00000000;
 			end
 		end
 	end

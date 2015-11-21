@@ -28,7 +28,7 @@ module Clock_Divider(
 	
 	always@(posedge(clk))
 	begin
-		if(counter == 4'd10)
+		if(counter == 4'd7)
 		begin
 			counter = 0;
 		end
