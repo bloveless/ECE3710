@@ -297,7 +297,7 @@ module Control(
 		begin
 			if(pc_jmp == 1'b1)
 			begin
-				pc <= c;
+				pc <= 16'h7FFF - c;
 			end
 			else if(pc_brch == 1'b1)
 			begin
