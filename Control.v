@@ -22,7 +22,10 @@
 
 module Control(
 		input reset_btn,
-		input in_clk,
+		input in_clk,		
+		input miso,
+		output mosi,
+		output sck,
 		output [6:0] seven_segment,
 		output [3:0] enable,
 		output [3:0] leds,
@@ -60,6 +63,15 @@ module Control(
 	// ALU
 	reg [15:0] a;
    reg [15:0] b;
+	
+	
+	 // Wireless stuff
+	 reg       wireless_start = 1'b0;
+    reg[7:0]  wireless_data_in = 8'b00000000;
+	 
+    wire[7:0] wireless_data_out;
+    wire      wireless_busy;
+    wire      wireless_new_data;
 	
 	
 	/* Outputs */
@@ -165,6 +177,19 @@ module Control(
 		.flags(flags)
 	);
 	
+	SPI #(.CLK_DIV(16)) spi (
+		.clk(clk),
+		.rst(reset_btn),
+		.miso(miso),
+		.mosi(mosi),
+		.sck(sck),
+		.start(wireless_start),
+		.data_in(wireless_data_in),
+		.data_out(wireless_data_out),
+		.busy(wireless_busy),
+		.new_data(wireless_new_data)
+	);
+	
 	reg [4:0] saved_flags;
 	reg save_flags;
 	reg [3:0] state;
@@ -201,6 +226,10 @@ module Control(
 				begin
 					state <= 7;
 				end
+				`WLS:
+				begin
+					state <= 8;
+				end
 				default: //RTYPES and ITYPES
 				begin
 					state <= 2;
@@ -235,6 +264,8 @@ module Control(
 		pc_brch = 0;
 		wait_enable = 0;
 		wait_reset = 0;
+		wireless_data_in = 8'b00000000;
+		wireless_start = 0;
 		
 		case(state)
 			0:	//Fetch state
@@ -295,6 +326,16 @@ module Control(
 					wait_enable = 1;
 				end
 			end
+			
+			8: // WLS State
+			begin
+				
+				wireless_data_in = port_a_out[11:0];
+				wireless_start = 1;
+				pc_enable = 1;
+				
+			end
+			
 			default:
 			begin
 				//default
@@ -311,7 +352,7 @@ module Control(
 		end
 		
 		//PC Counter
-		if(pc_enable == 1'b1)
+		if((pc_enable == 1'b1) && !wireless_busy)
 		begin
 			if(pc_jmp == 1'b1)
 			begin

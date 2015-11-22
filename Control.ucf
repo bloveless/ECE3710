@@ -119,3 +119,16 @@ NET "tft_clk" LOC = C10;
 NET "tft_de" LOC = A15;
 NET "tft_display" LOC = C15;
 NET "tft_en" LOC = D14;
+
+# Wireless
+
+NET "miso" IOSTANDARD = LVCMOS33;
+NET "mosi" IOSTANDARD = LVCMOS33;
+NET "sck" IOSTANDARD = LVCMOS33;
+
+# Wireless
+
+
+NET "miso" LOC = T12;
+NET "mosi" LOC = V12;
+NET "sck" LOC = N10;
