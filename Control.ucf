@@ -125,6 +125,7 @@ NET "tft_en" LOC = D14;
 NET "miso" IOSTANDARD = LVCMOS33;
 NET "mosi" IOSTANDARD = LVCMOS33;
 NET "sck" IOSTANDARD = LVCMOS33;
+NET "wireless_enable" IOSTANDARD = LVCMOS33;
 
 # Wireless
 
@@ -132,3 +133,4 @@ NET "sck" IOSTANDARD = LVCMOS33;
 NET "miso" LOC = T12;
 NET "mosi" LOC = V12;
 NET "sck" LOC = N10;
+NET "wireless_enable" LOC = P11;

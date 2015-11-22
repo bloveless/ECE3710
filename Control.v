@@ -26,6 +26,8 @@ module Control(
 		input miso,
 		output mosi,
 		output sck,
+		output wireless_chip_select,
+		output wireless_enable,
 		output [6:0] seven_segment,
 		output [3:0] enable,
 		output [3:0] leds,
@@ -72,6 +74,7 @@ module Control(
     wire[7:0] wireless_data_out;
     wire      wireless_busy;
     wire      wireless_new_data;
+	 wire      wireless_chip_select;
 	
 	
 	/* Outputs */
@@ -187,7 +190,8 @@ module Control(
 		.data_in(wireless_data_in),
 		.data_out(wireless_data_out),
 		.busy(wireless_busy),
-		.new_data(wireless_new_data)
+		.new_data(wireless_new_data),
+		.enable(wireless_enable)
 	);
 	
 	reg [4:0] saved_flags;
