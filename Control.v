@@ -124,8 +124,9 @@ module Control(
 		.h_count(h_count),
 		.v_count(v_count)
 	);
-	
+
 	Bit_Gen bg (
+		.NineMHz(NineMHz),
 		.h_count(h_count),
 		.v_count(v_count),
 		.port_b_address(port_b_address),

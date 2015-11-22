@@ -19,6 +19,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 module Bit_Gen(
+	 input NineMHz,
     input [9:0] h_count,
     input [8:0] v_count,
 	 input [15:0] port_b_out,
@@ -27,25 +28,22 @@ module Bit_Gen(
     output reg [7:0] green,
     output reg [7:0] blue
     );
-
-	initial
+	 
+	 reg set = 0;
+	
+	always@(NineMHz)
 	begin
-		port_b_address = 0;
-	end
-
-	always@(*)
-	begin
-		if(h_count[3] ^ v_count[4])
+		set <= ~set;
+		if(set == 1'b1)
 		begin
-			red = {8{port_b_out[0]}};
-			green = {8{port_b_out[1]}};
-			blue = {8{port_b_out[2]}};
+			port_b_address <= port_b_out + 720;		//Set address to glyph data
 		end
 		else
 		begin
-			red = {8{~port_b_out[0]}};
-			green = {8{~port_b_out[1]}};
-			blue = {8{~port_b_out[2]}};
+			red <= port_b_out[15:11];
+			green <= port_b_out[10:6];
+			blue <= port_b_out[5:0];
+			port_b_address <= h_count[9:3] + (v_count[8:4] * 60); //Set address to 0-720 for each glyph
 		end
 	end
 endmodule
