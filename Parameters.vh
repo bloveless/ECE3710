@@ -66,5 +66,8 @@
  `define ZERO_FLAG			3
  `define NEG_FLAG				4
  `define INVALID_OP_FLAG	5
+ 
+ `define BLT 4'b0111
+ `define TRAVEL 4'b1111
 
 `endif

@@ -37,9 +37,16 @@ module ALU (
 	 
 		case(opcode[15:12])
 		
-			`RTYPE:
-			begin
+			/*`TRAVEL: 
+				begin
+					c = opcode[11:0];
+					flags=5'b0;
+				end*/
+	
 			
+		
+			`RTYPE:
+				begin
 				case(opcode[7:4])
 					`EXT_ADD:
 					begin
@@ -89,15 +96,15 @@ module ALU (
 					
 					`EXT_CMP:
 					begin
-			
-						if( $signed(a) < $signed(b) ) flags[`NEG_FLAG] = 1'b1;
+						
+						if( $signed(a)< $signed(b) ) flags[`NEG_FLAG] = 1'b1;
 						else flags[`NEG_FLAG] = 1'b0;
 						if( $unsigned(a) < $unsigned(b) ) flags[`LOW_FLAG] = 1'b1;
 						else flags[`LOW_FLAG] = 1'b0;
 						if( a == b ) flags[`ZERO_FLAG] = 1'b1;
 						else flags[`ZERO_FLAG] = 1'b0;
 						c = 16'b0000000000000000;
-
+						
 					end
 					
 					default:
@@ -186,14 +193,17 @@ module ALU (
 
 			`CMPI:
 			begin
-			
+				flags =5'b0;
 				if( $signed(a) < $signed(opcode[7:0]) ) flags[`NEG_FLAG] = 1'b1;
 				else flags[`NEG_FLAG] = 1'b0;
 				
-				if( $unsigned(a) < $unsigned(opcode[7:0]) ) flags[`LOW_FLAG] = 1'b1;
+				if( a < {8'b0, opcode[7:0]} ) 
+					begin
+						flags[`LOW_FLAG] = 1'b1;
+					end
 				else flags[`LOW_FLAG] = 1'b0;
 				
-				if( a == opcode[7:0] ) flags[`ZERO_FLAG] = 1'b1;
+				if( a == {8'b0, opcode[7:0]} ) flags[`ZERO_FLAG] = 1'b1;
 				else flags[`ZERO_FLAG] = 1'b0;
 				
 				c = 16'b0000000000000000;
@@ -205,6 +215,7 @@ module ALU (
 				c = opcode[7:0];
 				flags = 5'b00000;
 			end
+			
 			
 			default:
 			begin

@@ -157,6 +157,9 @@ module Control(
 	reg [11:0] milliseconds = 0;
 	reg wait_enable = 0;
 	reg wait_reset = 0;
+	reg signed [16:0] subtractionPC_Reg = 17'b0;
+	reg signed [16:0] subtractionBranch_Reg = 17'b0;
+	reg signed [16:0] subtractionResult = 17'b0;
 	
 	always@(posedge clk)
 	begin
@@ -183,6 +186,11 @@ module Control(
 				begin
 					state <= 7;
 				end
+				`BLT:
+					begin
+						if(saved_flags[`LOW_FLAG]== 0) state <= 8;
+						else state <=9;
+					end
 				default: //RTYPES and ITYPES
 				begin
 					state <= 2;
@@ -193,6 +201,10 @@ module Control(
 		begin
 			state <= 5;
 		end
+		/*else if (state == 8) 
+		begin
+		state <= 9;
+		end*/
 		else
 		begin
 			state <= 0;
@@ -233,6 +245,7 @@ module Control(
 				pc_enable = 1;
 				write_enable = 1;
 				save_flags = 1;
+				
 			end
 			
 			3: //JMP state
@@ -241,12 +254,14 @@ module Control(
 				pc_jmp = 1;
 				alu_from_opcode_or_control = 0;
 				control_to_alu = {`ADDI, port_a_out[11:8], 8'b0};
+				
 			end
 			
 			4:	//LOAD state 1
 			begin
 				pc_or_b_control = 0;
 				reg_write = reg_write;
+				
 			end
 			
 			5:	//LOAD state 2
@@ -254,6 +269,7 @@ module Control(
 				pc_enable = 1;
 				c_or_mem_control = 0;
 				write_enable = 1;
+				
 			end
 			
 			6:	//STORE state 1
@@ -263,10 +279,12 @@ module Control(
 				pc_or_b_control = 0;
 				port_a_we = 1;
 				pc_enable = 1;
+				
 			end
 			
 			7:
 			begin
+				
 				if(milliseconds == port_a_out[11:0])
 				begin
 					pc_enable = 1;
@@ -277,16 +295,63 @@ module Control(
 					wait_enable = 1;
 				end
 			end
+			
+		
+			
+			//Here you are reading the flags and computing the memory address to branch to
+			8:
+				begin
+					alu_from_opcode_or_control = 0;
+					//subtractionResult=$signed(pc);
+					pc_enable=1;
+					pc_brch=0;
+				   save_flags=1'b0;
+					
+					control_to_alu = {`SHIFTS, port_a_out[11:8],`EXT_LSHI_LEFT, 4'b0};
+				end
+			9:
+				begin
+					
+					
+					/*pc_enable = 0;
+					pc_brch = 0;*/
+					
+					alu_from_opcode_or_control = 0;
+					//need to cast pc as signed -> extend width to accomidate
+					//then cast back to unsigned
+					subtractionPC_Reg = $signed(pc);
+					//this is going to sign extend the branch distance to match PC counter
+					subtractionBranch_Reg = $signed(port_a_out[11:0]);
+					subtractionResult = subtractionPC_Reg - subtractionBranch_Reg;
+					//Cast back to unsigned and update PC, this will just 
+					//cut off the MSB off of the 17 bit subtraction reg
+					save_flags=1'b0;
+					control_to_alu = {`SHIFTS, port_a_out[11:8],`EXT_LSHI_LEFT, 4'b0};
+					
+					pc_enable=1;
+					pc_brch=1;
+				
+				end
+				
+			
 			default:
 			begin
 				//default
 			end
+			
+			/*9:
+			begin
+				pc_enable=1;
+				pc_brch=1;
+			end*/
+			
 		endcase
 	end
 	
 	//Register to save flags and pc counter
 	always@(posedge clk)
 	begin
+		
 		if(save_flags)
 		begin
 			saved_flags <= flags;
@@ -301,7 +366,7 @@ module Control(
 			end
 			else if(pc_brch == 1'b1)
 			begin
-				pc <= pc - c;
+				pc <= $unsigned(subtractionResult);
 			end
 			else
 			begin
