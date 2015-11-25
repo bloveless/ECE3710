@@ -29,7 +29,8 @@ module SPI #(parameter CLK_DIV = 16)( // 16 works in real life, but is too slow 
     output[7:0] data_out,
     output busy,
     output new_data,
-	 output enable
+	 output enable,
+	 output chip_select
   );
 
   localparam STATE_SIZE = 2;
@@ -54,6 +55,7 @@ module SPI #(parameter CLK_DIV = 16)( // 16 works in real life, but is too slow 
   assign data_out = data_out_q;
   assign new_data = new_data_q;
   assign enable = enable_out;
+  assign chip_select = enable_out;
    
   always @(*)
   begin

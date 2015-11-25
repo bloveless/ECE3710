@@ -52,17 +52,20 @@
  
  `define CMPI					4'b1011
  
- `define SETI					4'b1010
+ `define SETI					 4'b1010
  
- `define JTYPE					4'b0100
+ `define JTYPE					 4'b0100
  
- `define LOAD					4'b0001
+ `define LOAD					 4'b0001
  
- `define STORE					4'b0010
+ `define STORE					 4'b0010
  
- `define WAIT					4'b0011
+ `define WAIT					 4'b0011
  
- `define WLS					4'b0110
+ `define WLS					 4'b0110
+ `define WRITE			 			4'b0000
+ `define READ				 		4'b0001
+ `define WRITE_FROM_REG 		4'b0010
 
  // Easy access to the flags
  `define CARRY_FLAG			0

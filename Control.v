@@ -74,7 +74,6 @@ module Control(
     wire[7:0] wireless_data_out;
     wire      wireless_busy;
     wire      wireless_new_data;
-	 wire      wireless_chip_select;
 	
 	
 	/* Outputs */
@@ -191,7 +190,8 @@ module Control(
 		.data_out(wireless_data_out),
 		.busy(wireless_busy),
 		.new_data(wireless_new_data),
-		.enable(wireless_enable)
+		.enable(wireless_enable),
+		.chip_select(wireless_chip_select)
 	);
 	
 	reg [4:0] saved_flags;
@@ -232,8 +232,28 @@ module Control(
 				end
 				`WLS:
 				begin
-					state <= 8;
+				
+					case(port_a_out[11:8])
+					
+						`WRITE:
+						begin
+							state <= 8;
+						end
+						
+						`READ:
+						begin
+							state <= 9;
+						end
+						
+						`WRITE_FROM_REG:
+						begin
+							state <= 10;
+						end
+						
+					endcase
+				
 				end
+				
 				default: //RTYPES and ITYPES
 				begin
 					state <= 2;
@@ -331,13 +351,36 @@ module Control(
 				end
 			end
 			
-			8: // WLS State
+			8: // WLS Write State
 			begin
 				
 				wireless_data_in = port_a_out[11:0];
 				wireless_start = 1;
 				pc_enable = 1;
 				
+			end
+			
+			9: // WLS Read State
+			begin
+			
+				control_to_alu = {`SETI, port_a_out[11:8], wireless_data_out};
+				alu_from_opcode_or_control = 0;
+				pc_or_b_control = 0;
+				write_enable = 1;
+				pc_enable = 1;
+			
+			end
+			
+			10:
+			begin
+			
+				// get the data from the register
+				reg_read_a = port_a_out[3:0];
+				// and send that data to the wireless
+				wireless_data_in = reg_a;
+				wireless_start = 1;
+				pc_enable = 1;
+			
 			end
 			
 			default:
