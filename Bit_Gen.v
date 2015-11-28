@@ -19,7 +19,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 module Bit_Gen(
-	 input NineMHz,
+	 input clk,
     input [9:0] h_count,
     input [8:0] v_count,
 	 input [15:0] port_b_out,
@@ -29,58 +29,28 @@ module Bit_Gen(
     output reg [7:0] blue
     );
 
-	always@(NineMHz)
+	reg [2:0] state = 0;
+	
+	always@(posedge(clk))
 	begin
-		if(NineMHz == 1'b0)
+		state <= state + 1;
+	end
+
+	always@(posedge(clk))
+	begin
+		if(state == 3'd2)
 		begin
-			port_b_address = (port_b_out * 128) + 1021 + h_count[2:0] + (v_count[3:0] * 8);		//Set address to glyph data
+			port_b_address = (port_b_out * 128) + 1020 + h_count[2:0] + (v_count[3:0] * 8);		//Set address to glyph data
 		end
-		else
+		else if(state == 3'd0)
 		begin
-			red = {port_b_out[15:11],3'b1};
-			green = {port_b_out[10:6],3'b1};
-			blue = {port_b_out[5:0],2'b1};
 			port_b_address = h_count[9:3] + (v_count[8:4] * 60); //Set address to 0-1020 for each glyph
 		end
-	end
-	/*
-	initial
-	begin
-		port_b_address = 0;
-	end
-	
-	always@(*)
-	begin
-		if((h_count[9:3] + (v_count[8:4] * 60)) >= 510)
+		else if(state == 3'd4)
 		begin
-			if((h_count[2:0] + (v_count[3:0] * 8)) >= 64)
-			begin
-				red = 8'b11111111;
-				green = 8'b00000000;
-				blue = 8'b00000000;
-			end
-			else
-			begin
-				red = 8'b11111111;
-				green = 8'b11111111;
-				blue = 8'b00000000;
-			end
-		end
-		else
-		begin
-			if((h_count[2:0] + (v_count[3:0] * 8)) >= 64)
-			begin
-				red = 8'b11111111;
-				green = 8'b00000000;
-				blue = 8'b11111111;
-			end
-			else
-			begin
-				red = 8'b00000000;
-				green = 8'b11111111;
-				blue = 8'b00000000;
-			end
+			red = {port_b_out[15:11],{3{port_b_out[11]}}};
+			green = {port_b_out[10:6],{3{port_b_out[6]}}};
+			blue = {port_b_out[5:0],{2{port_b_out[0]}}};
 		end
 	end
-	*/
 endmodule

@@ -54,9 +54,9 @@ module Control(
 	/* Inputs */
 	// Memory
    wire [14:0] port_b_address;
-   reg [15:0] port_b_in;
+   reg [15:0] port_b_in = 0;
    reg        port_a_we;
-   reg        port_b_we;
+   reg        port_b_we = 0;
 	// Reg File
 	reg [3:0]  reg_write;
    reg [3:0]  reg_read_a;
@@ -147,7 +147,7 @@ module Control(
 	);
 
 	Bit_Gen bg (
-		.NineMHz(NineMHz),
+		.clk(clk),
 		.h_count(h_count),
 		.v_count(v_count),
 		.port_b_address(port_b_address),

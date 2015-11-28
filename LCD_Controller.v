@@ -46,7 +46,7 @@ module LCD_Controller(
 	reg clk_enable = 0;
 	reg clk_high = 0;
 	
-	assign h_count = h - 10'd45;
+	assign h_count = h - 10'd44;
 	assign v_count = v - 9'd16;
 	
 	assign tft_clk = (NineMHz & clk_enable) | clk_high;
