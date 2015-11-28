@@ -1,0 +1,58 @@
+.data
+    @file character_memory.txt
+
+.text
+    // Wireless initialization
+    WLSW    0x31
+    WLSW    0x02
+    WLSW    0x00
+    WLSW    0x00
+    WLSW    0x20
+    WLSW    0x3B
+    WLSW    0x00
+    WLSW    0x00
+    WLSW    0x20
+    WLSW    0x3B
+    WLSW    0x00
+    WLSW    0x00
+    WLSW    0x20
+    WLSW    0x3B
+    WLSW    0x00
+    WLSW    0x00
+    WLSW    0x20
+    WLSW    0x3B
+    WLSW    0xE2
+    WLSW    0xE1
+    WLSW    0x07
+    WLSW    0x00
+    WLSW    0x27
+    WLSW    0x1E
+    WLSW    0x07
+    WLSW    0x00
+    WLSW    0x27
+    WLSW    0x2E
+    WLSW    0x07
+    WLSW    0x00
+    WLSW    0x27
+    WLSW    0x4E
+    // Send a 1 and receive a two
+    WLSW    0xE1
+    WLSW    0xA0
+    WLSW    0x02
+    WLSW    0x01
+    WLSW    0x00
+    WLSW    0x00
+    WLSW    0x20
+    WLSW    0x3A
+    WLSW    0x00
+    WLSW    0x00
+    WLSW    0x20
+    WLSW    0x3B
+    WLSW    0x61
+    WLSW    0x00
+    WLSW    0x00
+    WLSW    0xE2
+    WLSW    0x07
+    WLSW    0x00
+    WLSW    0x27
+    WLSW    0x6E

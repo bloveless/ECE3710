@@ -1,6 +1,5 @@
 *.prj
 *.ini
-*.exe
 isim
 *.log
 *.cmd_log
@@ -54,3 +53,4 @@ _ngo
 *.wpc
 *.jou
 *.ppr
+*.stackdump
