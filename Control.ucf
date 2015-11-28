@@ -48,7 +48,6 @@ NET "seven_segment[2]" LOC = M14;
 NET "seven_segment[1]" LOC = N14;
 NET "seven_segment[0]" LOC = L14;
 
-# PlanAhead Generated IO constraints 
 
 NET "blue[7]" IOSTANDARD = LVCMOS33;
 NET "blue[6]" IOSTANDARD = LVCMOS33;
@@ -75,7 +74,6 @@ NET "red[2]" IOSTANDARD = LVCMOS33;
 NET "red[1]" IOSTANDARD = LVCMOS33;
 NET "red[0]" IOSTANDARD = LVCMOS33;
 
-# PlanAhead Generated physical constraints 
 
 NET "red[7]" LOC = A12;
 NET "red[6]" LOC = B12;
@@ -102,7 +100,6 @@ NET "blue[2]" LOC = B6;
 NET "blue[1]" LOC = A7;
 NET "blue[0]" LOC = C7;
 
-# PlanAhead Generated IO constraints 
 
 NET "in_clk" IOSTANDARD = LVCMOS33;
 NET "led_en" IOSTANDARD = LVCMOS33;
@@ -111,7 +108,6 @@ NET "tft_de" IOSTANDARD = LVCMOS33;
 NET "tft_display" IOSTANDARD = LVCMOS33;
 NET "tft_en" IOSTANDARD = LVCMOS33;
 
-# PlanAhead Generated physical constraints 
 
 NET "in_clk" LOC = V10;
 NET "led_en" LOC = C14;
@@ -119,3 +115,21 @@ NET "tft_clk" LOC = C10;
 NET "tft_de" LOC = A15;
 NET "tft_display" LOC = C15;
 NET "tft_en" LOC = D14;
+
+# PlanAhead Generated IO constraints 
+
+NET "TP_DCLK" IOSTANDARD = LVCMOS33;
+NET "TP_CS" IOSTANDARD = LVCMOS33;
+NET "TP_BUSY" IOSTANDARD = LVCMOS33;
+NET "TP_DIN" IOSTANDARD = LVCMOS33;
+NET "TP_DOUT" IOSTANDARD = LVCMOS33;
+NET "TP_PENIRQ" IOSTANDARD = LVCMOS33;
+
+# PlanAhead Generated physical constraints 
+
+NET "TP_BUSY" LOC = B2;
+NET "TP_CS" LOC = B3;
+NET "TP_DCLK" LOC = D11;
+NET "TP_DIN" LOC = D6;
+NET "TP_DOUT" LOC = C6;
+NET "TP_PENIRQ" LOC = A3;

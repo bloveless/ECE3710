@@ -23,6 +23,12 @@
 module Control(
 		input reset_btn,
 		input in_clk,
+		input TP_PENIRQ, 
+		input TP_BUSY, 
+		input TP_DOUT, 
+		output TP_CS, 
+		output TP_DCLK, 
+		output TP_DIN, 
 		output [6:0] seven_segment,
 		output [3:0] enable,
 		output [3:0] leds,
@@ -63,6 +69,9 @@ module Control(
 	
 	
 	/* Outputs */
+	//touchScreen
+	wire [7:0] X_POS;
+	wire [7:0] Y_POS;
 	// Memory
 	wire [15:0] port_a_out;
    wire [15:0] port_b_out;
@@ -86,6 +95,18 @@ module Control(
 	wire [15:0] alu_in;
 	reg [15:0] control_to_alu;
 	assign alu_in = alu_from_opcode_or_control ? port_a_out : control_to_alu;
+	
+	touchScreen touchscreen(
+		.system_clock(clk), 
+		.TP_PENIRQ(TP_PENIRQ), 
+		.TP_BUSY(TP_BUSY), 
+		.TP_DOUT(TP_DOUT), 
+		.TP_CS(TP_CS), 
+		.TP_DCLK(TP_DCLK), 
+		.TP_DIN(TP_DIN), 
+		.X_POS(X_POS), 
+		.Y_POS(Y_POS)
+	);
 	
 	DCM dcm (
 		.CLK_IN1(in_clk),
@@ -178,7 +199,11 @@ module Control(
 	
 	always@(posedge clk)
 	begin
-		if(state == 0)			//Fetch
+		if(TP_PENIRQ==1'b0)
+		begin
+			state <=8;
+		end
+		else if(state == 0)			//Fetch
 		begin
 			state <= 1;
 		end
@@ -207,10 +232,12 @@ module Control(
 				end
 			endcase
 		end
+		
 		else if(state == 4)
 		begin
 			state <= 5;
-		end
+			end
+		
 		else
 		begin
 			state <= 0;
@@ -295,6 +322,22 @@ module Control(
 					wait_enable = 1;
 				end
 			end
+			8: //Touchscreen Active
+			begin
+				pc_enable = 0;
+				alu_from_opcode_or_control = 0;
+				control_to_alu = {`ADDI, 4'd5, 8'hFF};
+				if(milliseconds == 12'b0010_0000_0000)
+				begin
+					pc_enable = 1;
+					wait_reset = 1;
+				end
+				else
+				begin
+					wait_enable = 1;
+				end
+			end
+			
 			default:
 			begin
 				//default
