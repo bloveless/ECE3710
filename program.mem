@@ -1,0 +1,67 @@
+//load 1 into memory locations 0 and 1 to initialize fibonacci
+@1 01
+@2 01
+//memory is now at 1 1 2 3 5 8 13
+@7EFA 0010_0000_0000_1111
+//we want to store $R0 into the location of $r15
+@7EFB 0000_0000_0101_0001 //ADD $R0, $R1
+//now we want to add $R0 and R1 together
+@7EFC 0101_1101_0000_0001 /ADDI $R13 #1
+@7EFD 0101_1110_0000_0001 /ADDI $R14 #1
+@7EFE 0101_1111_0000_0001 /ADDI $R15 #1
+//now we want to increment all of our counters to store/load next value
+@7EFF 0001_0001_0000_1110 //LW $R1 $R14
+@7FE0 0001_0000_0000_1101 //LW $R0 $R13
+//Load two values from memory from addresses stored in $R13 into $R0 and $R14 and $R1
+//memory is now at 1 1 2 3 5 8
+@7FE1 0010_0000_0000_1111
+//we want to store $R0 into the location of $r15
+@7FE2 0000_0000_0101_0001 //ADD $R0, $R1
+//now we want to add $R0 and R1 together
+@7FE3 0101_1101_0000_0001 /ADDI $R13 #1
+@7FE4 0101_1110_0000_0001 /ADDI $R14 #1
+@7FE5 0101_1111_0000_0001 /ADDI $R15 #1
+//now we want to increment all of our counters to store/load next value
+@7FE6 0001_0001_0000_1110 //LW $R1 $R14
+@7FE7 0001_0000_0000_1101 //LW $R0 $R13
+//Load two values from memory from addresses stored in $R13 into $R0 and $R14 and $R1
+//memory is now at 1 1 2 3 5
+@7FE8 0010_0000_0000_1111
+//we want to store $R0 into the location of $r15
+@7FE9 0000_0000_0101_0001 //ADD $R0, $R1
+//now we want to add $R0 and R1 together
+@7FEA 0101_1101_0000_0001 /ADDI $R13 #1
+@7FEB 0101_1110_0000_0001 /ADDI $R14 #1
+@7FEC 0101_1111_0000_0001 /ADDI $R15 #1
+//now we want to increment all of our counters to store/load next value
+@7FED 0001_0001_0000_1110 //LW $R1 $R14
+@7FEE 0001_0000_0000_1101 //LW $R0 $R13
+//Load two values from memory from addresses stored in $R13 into $R0 and $R14 and $R1
+//memory is now at 1 1 2 3
+@7FEF 0010_0000_0000_1111
+//we want to store $R0 into the location of $r15
+@7FF0 0000_0000_0101_0001 //ADD $R0, $R1
+//now we want to add $R0 and R1 together
+@7FF1 0101_1101_0000_0001 /ADDI $R13 #1
+@7FF2 0101_1110_0000_0001 /ADDI $R14 #1
+@7FF3 0101_1111_0000_0001 /ADDI $R15 #1
+//now we want to increment all of our counters to store/load next value
+@7FF4 0001_0001_0000_1110 //LW $R1 $R14
+@7FF5 0001_0000_0000_1101 //LW $R0 $R13
+//Load two values from memory from addresses stored in $R13 into $R0 and $R14 and $R1
+//memory is now at 1 1 2
+@7FF6 0010_0000_0000_1111
+//we want to store $R0 into the location of $r15
+@7FF7 0000_0000_0101_0001 //ADD $R0, $R1
+//now we want to add $R0 and R1 together
+@7FF8 0101_1101_0000_0001 /ADDI $R13 #1
+@7FF9 0101_1110_0000_0001 /ADDI $R14 #1
+@7FFA 0101_1111_0000_0001 /ADDI $R15 #1
+//now we want to increment all of our counters to store/load next value
+@7FFB 0001_0001_0000_1110 //LW $R1 $R14
+@7FFC 0001_0000_0000_1101 //LW $R0 $R13
+//Load two values from memory from addresses stored in $R13 into $R0 and $R14 and $R1
+@7FFD 1010_1101_0000_0000 //SETI $R13 #1
+@7FFE 1010_1110_0000_0001 //SETI $R14 #2
+@7FFF 1010_1111_0000_0010 //SETI $R15 #2
+//Setup registers $R13, $R14, $R15 to hold counters

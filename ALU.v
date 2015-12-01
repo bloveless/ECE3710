@@ -21,10 +21,10 @@
 `include "parameters.vh"
 
 module ALU (
-    input      [15:0] a,
-    input      [15:0] b,
-    input      [15:0] opcode,
-	 input		carry_in,
+    input wire [15:0] a,
+    input wire [15:0] b,
+    input wire [15:0] opcode,
+	 input wire carry_in,
     output reg [15:0] c,
     output reg [4:0]  flags
     );

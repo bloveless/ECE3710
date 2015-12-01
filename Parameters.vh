@@ -18,9 +18,14 @@
 // Additional Comments: 
 //
 //////////////////////////////////////////////////////////////////////////////////
+// TEST CHANGE FROM DAN
+// TEST CHANGE FROM NICK
 
 `ifndef _parameters_vh
 `define _parameters_vh
+ 
+ //Frequency of DCM output
+ `define FREQ					75
  
  // All the available operations
  `define NOOP					16'b0
@@ -48,6 +53,14 @@
  `define CMPI					4'b1011
  
  `define SETI					4'b1010
+ 
+ `define JTYPE					4'b0100
+ 
+ `define LOAD					4'b0001
+ 
+ `define STORE					4'b0010
+ 
+ `define WAIT					4'b0011
 
  // Easy access to the flags
  `define CARRY_FLAG			0

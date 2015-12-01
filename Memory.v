@@ -19,21 +19,23 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 module Memory(
-    input [14:0] port_a_address,
-    input [14:0] port_b_address,
-    input [15:0] port_a_in,
-    input [15:0] port_b_in,
+    input wire [13:0] port_a_address,
+    input wire [13:0] port_b_address,
+    input wire [15:0] port_a_in,
+    input wire [15:0] port_b_in,
 	 
-    input port_a_we,
-    input port_b_we,
-    input clk,
+    input wire port_a_we,
+    input wire port_b_we,
+    input wire clk,
 	 output reg [15:0] port_a_out,
     output reg [15:0] port_b_out
     );
 
-	parameter NUM_RAM_ADDR_BITS = (1024*32)-1; //<ram_addr_bits>;
+	parameter NUM_RAM_ADDR_BITS = (1024*16)-1; //<ram_addr_bits>;
 		 
 	reg [15:0] the_memory_core [NUM_RAM_ADDR_BITS:0];
+	
+	initial $readmemb("character.mem", the_memory_core);
 	
    always @(posedge clk)
 	begin
