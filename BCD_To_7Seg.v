@@ -19,8 +19,8 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 module BCD_To_7Seg(
-    input [15:0] binary,
-	 input clk,
+    input wire [15:0] binary,
+	 input wire clk,
     output reg [6:0] seven_segment,
 	 output reg [3:0] enable,
 	 output reg [3:0] leds

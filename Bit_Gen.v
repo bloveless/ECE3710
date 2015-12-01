@@ -19,11 +19,11 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 module Bit_Gen(
-	 input clk,
-    input [9:0] h_count,
-    input [8:0] v_count,
-	 input [15:0] port_b_out,
-	 output reg [14:0] port_b_address,
+	 input wire clk,
+    input wire [9:0] h_count,
+    input wire [8:0] v_count,
+	 input wire [15:0] port_b_out,
+	 output reg [13:0] port_b_address,
     output reg [7:0] red,
     output reg [7:0] green,
     output reg [7:0] blue

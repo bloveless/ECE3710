@@ -27,27 +27,61 @@ module Control_Runner;
 	// Inputs
 	reg reset_btn;
 	reg clk;
+	reg TP_PENIRQ;
+	reg TP_BUSY;
+	reg TP_DOUT;
 
 	// Outputs
-	wire [6:0] seven_segment;
-	wire [3:0] enable;
-	wire [3:0] leds;
+	wire TP_CS;
+	wire TP_DCLK;
+	wire TP_DIN;
 
 	// Instantiate the Unit Under Test (UUT)
 	Control uut (
 		.reset_btn(reset_btn), 
 		.clk(clk), 
-		.seven_segment(seven_segment), 
-		.enable(enable), 
-		.leds(leds)
+		.TP_PENIRQ(TP_PENIRQ), 
+		.TP_BUSY(TP_BUSY),
+		.TP_DOUT(TP_DOUT), 
+		.TP_CS(TP_CS), 
+		.TP_DCLK(TP_DCLK), 
+		.TP_DIN(TP_DIN)
 	);
 
 	initial begin
 		reset_btn = 0;
 		clk = 0;
+		TP_PENIRQ = 1;
+		TP_BUSY = 1;
+		TP_DOUT = 1;
 
 		// Wait 100 ns for global reset to finish
-		#100;
+		#2;
+		TP_PENIRQ = 0;
+		#200
+		TP_BUSY = 0;
+		TP_DOUT = 0;
+		#700
+		TP_BUSY = 1;
+		#162
+		TP_BUSY = 0;
+		TP_DOUT = 1;
+		#76
+		TP_DOUT = 0;
+		#76
+		TP_DOUT = 1;
+		#76
+		TP_DOUT = 0;
+		#76
+		TP_DOUT = 1;
+		#76
+		TP_DOUT = 0;
+		#76
+		TP_DOUT = 1;
+		#76
+		TP_DOUT = 0;
+		
+		
 	end
 	
 	always begin

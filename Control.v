@@ -21,31 +21,31 @@
 `include "parameters.vh"
 
 module Control(
-		input reset_btn,
-		input in_clk,
-		input TP_PENIRQ, 
-		input TP_BUSY, 
-		input TP_DOUT, 
-		output TP_CS, 
-		output TP_DCLK, 
-		output TP_DIN, 
-		output [6:0] seven_segment,
-		output [3:0] enable,
-		output [3:0] leds,
-		output [7:0] red,	//Red		A12, B12, A13, C13, A14, B14, F13, E13
-		output [7:0] green,	//Green  C8,  D8,  B9,  A9,  F9,  A11, G9,  B11
-		output [7:0] blue,	//Blue	A4,  A5,  B4,  C5,  A6,  B6,  A7,  C7
-		output tft_clk,			//clk to lcd. Should be 9.1 MHz	C10
-		output tft_display, 	//High to turn on backlight (Should always be high)	C15
-		output led_en,			//Screen brightness with PWM. Pulse 5 kHz for max brightness	C14
-		output tft_en,			//Set low for sleep state. Should always be high.	D14
-		output tft_de			//Set high for each row of pixels. Set low between rows.	A15
+		input wire reset_btn,
+		input wire in_clk,
+		input wire TP_PENIRQ, 
+		input wire TP_BUSY, 
+		input wire TP_DOUT, 
+		output wire TP_CS, 
+		output wire TP_DCLK, 
+		output wire TP_DIN, 
+		output wire [6:0] seven_segment,
+		output wire [3:0] enable,
+		output wire [3:0] leds,
+		output wire [7:0] red,	//Red		A12, B12, A13, C13, A14, B14, F13, E13
+		output wire [7:0] green,	//Green  C8,  D8,  B9,  A9,  F9,  A11, G9,  B11
+		output wire [7:0] blue,	//Blue	A4,  A5,  B4,  C5,  A6,  B6,  A7,  C7
+		output wire tft_clk,			//clk to lcd. Should be 9.1 MHz	C10
+		output wire tft_display, 	//High to turn on backlight (Should always be high)	C15
+		output wire led_en,			//Screen brightness with PWM. Pulse 5 kHz for max brightness	C14
+		output wire tft_en,			//Set low for sleep state. Should always be high.	D14
+		output wire tft_de			//Set high for each row of pixels. Set low between rows.	A15
    );
 	
 	// Allow 16 bits so we can address peripherals
 	// If the 16th bit is 1 we select from a peripheral
 	// If it is 0 we are reading from memory
-	reg [14:0] pc = 15'b111111111111111;
+	reg [13:0] pc = 14'b11111111111111;
 	
    reg reset;
 	
@@ -53,7 +53,7 @@ module Control(
 	
 	/* Inputs */
 	// Memory
-   wire [14:0] port_b_address;
+   wire [13:0] port_b_address;
    reg [15:0] port_b_in = 0;
    reg        port_a_we;
    reg        port_b_we = 0;
@@ -70,8 +70,10 @@ module Control(
 	
 	/* Outputs */
 	//touchScreen
-	wire [7:0] X_POS;
-	wire [7:0] Y_POS;
+	wire [11:0] X_POS;
+	wire [11:0] Y_POS;
+	wire [11:0] Z_POS;
+	wire screen_touched;
 	// Memory
 	wire [15:0] port_a_out;
    wire [15:0] port_b_out;
@@ -88,24 +90,29 @@ module Control(
 	assign c_or_mem = c_or_mem_control ? c : port_a_out;
 	
 	reg pc_or_b_control;		//Mux control line
-	wire [14:0] pc_or_b;				//Mux output
-	assign pc_or_b = pc_or_b_control ? pc : reg_b[14:0];
+	wire [13:0] pc_or_b;				//Mux output
+	assign pc_or_b = pc_or_b_control ? pc : reg_b[13:0];
 	
 	reg alu_from_opcode_or_control;
 	wire [15:0] alu_in;
 	reg [15:0] control_to_alu;
 	assign alu_in = alu_from_opcode_or_control ? port_a_out : control_to_alu;
 	
-	touchScreen touchscreen(
-		.system_clock(clk), 
-		.TP_PENIRQ(TP_PENIRQ), 
-		.TP_BUSY(TP_BUSY), 
-		.TP_DOUT(TP_DOUT), 
-		.TP_CS(TP_CS), 
-		.TP_DCLK(TP_DCLK), 
-		.TP_DIN(TP_DIN), 
-		.X_POS(X_POS), 
-		.Y_POS(Y_POS)
+	reg RST_I = 0;
+	
+	touchScreen #(.CLOCKFREQ(75)) 
+		touchscreen(
+		.CLK_I(clk), 
+		.RST_I(RST_I),
+		.PENIRQ_I(TP_PENIRQ), 
+		.BUSY_I(TP_BUSY), 
+		.DOUT_I(TP_DOUT),
+		.CS_O(TP_CS), 
+		.DCLK_O(TP_DCLK), 
+		.DIN_O(TP_DIN), 
+		.X_O(X_POS), 
+		.Y_O(Y_POS),
+		.Z_O(Z_POS)
 	);
 	
 	DCM dcm (
@@ -170,7 +177,7 @@ module Control(
 	);
 	
 	BCD_To_7Seg bcd (
-		.binary(port_b_out),
+		.binary({X_POS[11:4], Y_POS[11:4]}),
 		.clk(clk),
 		.seven_segment(seven_segment),
 		.enable(enable),
@@ -358,7 +365,7 @@ module Control(
 		begin
 			if(pc_jmp == 1'b1)
 			begin
-				pc <= 16'h7FFF - c;
+				pc <= 14'h3FFF - c;
 			end
 			else if(pc_brch == 1'b1)
 			begin

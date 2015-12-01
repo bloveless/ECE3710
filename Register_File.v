@@ -19,13 +19,13 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 module Register_File(
-    input [3:0] reg_write,
-    input [3:0] reg_read_a,
-    input [3:0] reg_read_b,
-    input write_enable,
-    input reset,
-	 input [15:0] alu_input,
-	 input clk,
+    input wire [3:0] reg_write,
+    input wire [3:0] reg_read_a,
+    input wire [3:0] reg_read_b,
+    input wire write_enable,
+    input wire reset,
+	 input wire [15:0] alu_input,
+	 input wire clk,
     output reg [15:0] reg_a,
     output reg [15:0] reg_b
     );

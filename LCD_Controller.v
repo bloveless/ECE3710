@@ -19,13 +19,13 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 module LCD_Controller(
-	 input clk,
-    input NineMHz,
-	 output tft_clk,
+	 input wire clk,
+    input wire NineMHz,
+	 output wire tft_clk,
 	 output reg tft_display,
 	 output reg led_en,
 	 output reg tft_en,
-	 output tft_de,
+	 output wire tft_de,
 	 output [9:0] h_count,
 	 output [8:0] v_count
     );

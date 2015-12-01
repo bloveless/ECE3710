@@ -19,8 +19,8 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 module Clock_Divider(
-    input clk,
-    output NineMHz
+    input wire clk,
+    output wire NineMHz
     );
 	
 	reg [3:0] counter = 0;
