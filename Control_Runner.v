@@ -32,9 +32,13 @@ module Control_Runner;
 	wire [6:0] seven_segment;
 	wire [3:0] enable;
 	wire [3:0] leds;
+	reg wireless_start = 1'b0;
+	reg [7:0]  wireless_data_in = 8'b00000000;
 
 	// Instantiate the Unit Under Test (UUT)
 	Control uut (
+		.wireless_start(wireless_start),
+		.wireless_data_in(wireless_data_in),
 		.reset_btn(reset_btn), 
 		.clk(clk), 
 		.seven_segment(seven_segment), 
@@ -48,6 +52,10 @@ module Control_Runner;
 
 		// Wait 100 ns for global reset to finish
 		#100;
+		
+		wireless_data_in = 8'b10101010;
+		wireless_start = 1'b1;
+		
 	end
 	
 	always begin

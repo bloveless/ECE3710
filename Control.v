@@ -22,8 +22,10 @@
 
 module Control(
 		input reset_btn,
-		input in_clk,		
+		input clk,		
 		input miso,
+		input wireless_start,
+		input [7:0] wireless_data_in,
 		output mosi,
 		output sck,
 		output wireless_chip_select,
@@ -68,12 +70,14 @@ module Control(
 	
 	
 	 // Wireless stuff
-	 reg       wireless_start = 1'b0;
-    reg[7:0]  wireless_data_in = 8'b00000000;
+	 // reg        wireless_start = 1'b0;
+	 wire       wireless_start;
+    // reg[7:0]   wireless_data_in = 8'b00000000;
+	 wire[7:0]  wireless_data_in;
 	 
     wire[7:0] wireless_data_out;
-    wire      wireless_busy;
-    wire      wireless_new_data;
+    wire       wireless_busy;
+    wire       wireless_new_data;
 	
 	
 	/* Outputs */
@@ -101,10 +105,13 @@ module Control(
 	reg [15:0] control_to_alu;
 	assign alu_in = alu_from_opcode_or_control ? port_a_out : control_to_alu;
 	
+	/*
 	DCM dcm (
 		.CLK_IN1(in_clk),
 		.CLK_OUT1(clk)
 	);
+	*/
+	
 	
 	Memory memory (
 		.port_a_address(pc_or_b),
@@ -179,19 +186,26 @@ module Control(
 		.flags(flags)
 	);
 	
-	SPI #(.CLK_DIV(16)) spi (
-		.clk(clk),
-		.rst(reset_btn),
-		.miso(miso),
-		.mosi(mosi),
-		.sck(sck),
-		.start(wireless_start),
-		.data_in(wireless_data_in),
-		.data_out(wireless_data_out),
-		.busy(wireless_busy),
-		.new_data(wireless_new_data),
-		.enable(wireless_enable),
-		.chip_select(wireless_chip_select)
+	wire [0:0] ss;
+	wire       control_sclk;
+	
+	assign wireless_chip_select = ss[0];
+	assign wireless_enable = wireless_chip_select;
+	
+	spi_master #(.slaves(1), .d_width(8), .clk_div(32), .addr(0)) spi (
+		.clock(clk),                // system clock
+		.reset_n(~reset_btn),       // asynchronous reset
+		.enable(wireless_start),    // initiate transaction
+		.cpol(1'b0),                // spi clock polarity
+		.cpha(1'b0),                // spi clock phase
+		.cont(1'b0),                // continuous mode command
+		.tx_data(wireless_data_in), // data to transmit
+		.miso(miso),                // master in, slave out
+		.sclk(control_sclk),        // spi clock
+		.ss_n(ss),                  // slave select
+		.mosi(mosi),                // master out, slave in
+		.busy(wireless_busy),       // busy / data ready signal
+		.rx_data(wireless_data_out) // data received
 	);
 	
 	reg [4:0] saved_flags;
@@ -288,8 +302,8 @@ module Control(
 		pc_brch = 0;
 		wait_enable = 0;
 		wait_reset = 0;
-		wireless_data_in = 8'b00000000;
-		wireless_start = 0;
+		// wireless_data_in = 8'b00000000;
+		// wireless_start = 0;
 		
 		case(state)
 			0:	//Fetch state
@@ -354,8 +368,8 @@ module Control(
 			8: // WLS Write State
 			begin
 				
-				wireless_data_in = port_a_out[11:0];
-				wireless_start = 1;
+				// wireless_data_in = port_a_out[11:0];
+				// wireless_start = 1;
 				pc_enable = 1;
 				
 			end
@@ -377,8 +391,8 @@ module Control(
 				// get the data from the register
 				reg_read_a = port_a_out[3:0];
 				// and send that data to the wireless
-				wireless_data_in = reg_a;
-				wireless_start = 1;
+				// wireless_data_in = reg_a;
+				// wireless_start = 1;
 				pc_enable = 1;
 			
 			end

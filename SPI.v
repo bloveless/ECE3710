@@ -18,137 +18,170 @@
 // Additional Comments: 
 //
 //////////////////////////////////////////////////////////////////////////////////
-module SPI #(parameter CLK_DIV = 16)( // 16 works in real life, but is too slow for the simulation
-    input clk,
-    input rst,
-    input miso,
-    output mosi,
-    output sck,
-    input start,
-    input[7:0] data_in,
-    output[7:0] data_out,
-    output busy,
-    output new_data,
-	 output enable,
-	 output chip_select
+module SPI (
+    input[1:0]      cdiv,
+	 input[7:0]      tdat,
+	 input           clk,
+	 input           din,
+	 input           mlb,
+	 input           rstb,
+	 input           start,
+	 output reg[7:0] rdata,
+	 output reg      done,
+	 output reg      dout,
+	 output reg      sck,
+	 output reg      ss,
+	 output reg      chip_enable
   );
+  
+	localparam idle   = 0;
+	localparam send   = 1;
+	localparam finish = 2;
+	
+	reg      shift;
+	reg      clr;
+	reg[3:0] mid;
+	reg[3:0] nxt;
+	reg[3:0] cur;
+	reg[7:0] nbit;
+	reg[7:0] rreg;
+	reg[7:0] treg;
+	reg[7:0] cnt;
+	
+	//state transistion
+	always@(negedge clk or negedge rstb)
+	begin
+		if(rstb==0)
+			cur <= finish;
+		else
+			cur <= nxt;
+	end
+	
+	//FSM I/O
+	always @(start or cur or nbit)
+	begin
+		nxt=cur;
+		clr=0; 
+		shift=0;
+		ss=0;
+		chip_enable=0;
+		case(cur)
+			idle:
+			begin
+				if(start==1)
+				begin
+					case (cdiv)
+						2'b00: mid=2;
+						2'b01: mid=4;
+						2'b10: mid=8;
+						2'b11: mid=16;
+					endcase
+					shift=1;
+					done=1'b0;
+					nxt=send;  
+				end
+			end //idle
+			
+			send:
+			begin
+				ss=0;
+				chip_enable=0;
+				if(nbit!=8)
+				begin
+					shift=1;
+				end
+				else
+				begin
+					rdata=rreg;
+					done=1'b1;
+					nxt=finish;
+				end
+			end//send
+			
+			finish:
+			begin
+				shift=0;
+				ss=1;
+				chip_enable=1;
+				clr=1;
+				nxt=idle;
+			end
+			
+			default:
+				nxt=finish;
+		endcase
+	end//always
 
-  localparam STATE_SIZE = 2;
-  localparam ENABLE = 2'd0,
-    IDLE = 2'd1,
-    WAIT_HALF = 2'd2,
-    TRANSFER = 2'd3;
-   
-  reg [STATE_SIZE-1:0] state_d, state_q;
-   
-  reg [7:0] data_d, data_q;
-  reg [CLK_DIV-1:0] sck_d, sck_q;
-  reg mosi_d, mosi_q;
-  reg [2:0] ctr_d, ctr_q;
-  reg new_data_d, new_data_q;
-  reg [7:0] data_out_d, data_out_q;
-  reg enable_out;
-   
-  assign mosi = mosi_q;
-  assign sck = (~sck_q[CLK_DIV-1]) & (state_q == TRANSFER);
-  assign busy = state_q != IDLE;
-  assign data_out = data_out_q;
-  assign new_data = new_data_q;
-  assign enable = enable_out;
-  assign chip_select = enable_out;
-   
-  always @(*)
-  begin
-    sck_d = sck_q;
-    data_d = data_q;
-    mosi_d = mosi_q;
-    ctr_d = ctr_q;
-    new_data_d = 1'b0;
-    data_out_d = data_out_q;
-    state_d = state_q;
-	 enable_out = 1'b1;
-     
-    case (state_q)
-	 
-      IDLE: begin
-        sck_d = 4'b0;              // reset clock counter
-        ctr_d = 3'b0;              // reset bit counter
-        if (start == 1'b1)         // if start command
-		  begin
-          data_d = data_in;        // copy data to send
-          state_d = ENABLE;        // change state
-        end
-      end
-		
-		ENABLE:
+	always@(negedge clk or posedge clr)
+	begin
+		if(clr==1)
 		begin
-		
-			sck_d = sck_q + 1'b1;
-			enable_out = 1'b0;
-			state_d = WAIT_HALF;
-		
+			cnt=0;
+			sck=1;
 		end
-		
-      WAIT_HALF:
+		else
 		begin
-		  enable_out = 1'b0;
-        sck_d = sck_q + 1'b1;                  // increment clock counter
-        if (sck_q == {CLK_DIV-1{1'b1}})        // if clock is half full (about to fall)
-		  begin
-          sck_d = 1'b0;                        // reset to 0
-          state_d = TRANSFER;                  // change state
-        end
-      end
-		
-      TRANSFER:
+			if(shift==1)
+			begin
+				cnt=cnt+1;
+				if(cnt==mid)
+				begin
+					sck=~sck;
+					cnt=0;
+				end //mid
+			end //shift
+		end //rst
+	end
+
+	always@(negedge sck or posedge clr)
+	begin
+		if(clr==1)
 		begin
-		  enable_out = 1'b0;
-        sck_d = sck_q + 1'b1;                           // increment clock counter
-        if (sck_q == 4'b0000)                           // if clock counter is 0
-		  begin
-          mosi_d = data_q[7];                           // output the MSB of data
-        end
-		  else if (sck_q == {CLK_DIV-1{1'b1}})            // else if it's half full (about to fall)
-		  begin
-          data_d = {data_q[6:0], miso};                 // read in data (shift in)
-        end
-		  else if (sck_q == {CLK_DIV{1'b1}})              // else if it's full (about to rise)
-		  begin
-          ctr_d = ctr_q + 1'b1;                         // increment bit counter
-          if (ctr_q == 3'b111)                          // if we are on the last bit
-			 begin
-            state_d = IDLE;                             // change state
-            data_out_d = data_q;                        // output data
-            new_data_d = 1'b1;                          // signal data is valid
-          end
-        end
-      end
-		
-    endcase
-  end
-   
-  always @(posedge clk)
-  begin
-    if (rst)
-	 begin
-      ctr_q <= 3'b0;
-      data_q <= 8'b0;
-      sck_q <= 4'b0;
-      mosi_q <= 1'b0;
-      state_q <= IDLE;
-      data_out_q <= 8'b0;
-      new_data_q <= 1'b0;
-    end
-	 else
-	 begin
-      ctr_q <= ctr_d;
-      data_q <= data_d;
-      sck_q <= sck_d;
-      mosi_q <= mosi_d;
-      state_q <= state_d;
-      data_out_q <= data_out_d;
-      new_data_q <= new_data_d;
-    end
-  end
-   
+			treg=8'hFF;
+			dout=1; 
+		end 
+		else
+		begin
+			if(nbit==0) //load data into TREG
+			begin
+				treg=tdat;
+				dout= mlb ? treg[7] : treg[0];
+			end //nbit_if
+			else
+			begin
+				if(mlb==0) //LSB first, shift right
+				begin
+					treg={1'b1,treg[7:1]};
+					dout=treg[0];
+				end
+				else //MSB first shift LEFT
+				begin
+					treg={treg[6:0],1'b1};
+					dout=treg[7];
+				end
+			end
+		end //rst
+	end
+
+	always@(posedge sck or posedge clr ) // or negedge rstb
+	begin
+		if(clr==1)
+		begin
+			nbit=0;
+			rreg=8'hFF;
+		end
+		else
+		begin
+			if(mlb==0) //LSB first, din@msb -> right shift
+			begin
+				rreg={din,rreg[7:1]};
+			end
+			else  //MSB first, din@lsb -> left shift
+			begin
+				rreg={rreg[6:0],din};
+			end
+			nbit=nbit+1;
+		end //rst
+	end
+
 endmodule
