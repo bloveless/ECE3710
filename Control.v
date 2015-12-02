@@ -176,6 +176,8 @@ module Control(
 		.clk(clk)
 	);
 	
+	reg delete_me = 0;
+	
 	BCD_To_7Seg bcd (
 		.binary({X_POS[11:4], Y_POS[11:4]}),
 		.clk(clk),
@@ -203,14 +205,11 @@ module Control(
 	reg [11:0] milliseconds = 0;
 	reg wait_enable = 0;
 	reg wait_reset = 0;
+	reg brch_amount = 0;
 	
 	always@(posedge clk)
 	begin
-		if(TP_PENIRQ==1'b0)
-		begin
-			state <=8;
-		end
-		else if(state == 0)			//Fetch
+		if(state == 0)			//Fetch
 		begin
 			state <= 1;
 		end
@@ -233,6 +232,10 @@ module Control(
 				begin
 					state <= 7;
 				end
+				`TCHBRCH:
+				begin
+					state <= 8;
+				end
 				default: //RTYPES and ITYPES
 				begin
 					state <= 2;
@@ -243,8 +246,11 @@ module Control(
 		else if(state == 4)
 		begin
 			state <= 5;
-			end
-		
+		end
+		else if(state == 8)
+		begin
+			state <= 9;
+		end
 		else
 		begin
 			state <= 0;
@@ -267,6 +273,7 @@ module Control(
 		save_flags = 0;
 		pc_jmp = 0;
 		pc_brch = 0;
+		brch_amount = 0;
 		wait_enable = 0;
 		wait_reset = 0;
 		
@@ -329,22 +336,25 @@ module Control(
 					wait_enable = 1;
 				end
 			end
-			8: //Touchscreen Active
+			8: //TOUCH BRANCH 1
 			begin
-				pc_enable = 0;
-				alu_from_opcode_or_control = 0;
-				control_to_alu = {`ADDI, 4'd5, 8'hFF};
-				if(milliseconds == 12'b0010_0000_0000)
+				reg_read_a = 4'b1110;
+				reg_read_b = 4'b1111;
+			end
+			9:	//TOUCH BRANCH 2
+			begin
+				if(reg_a[15:8] >= X_POS[11:4] && reg_a[7:0] <= X_POS[11:4] && reg_b[15:8] >= Y_POS[11:4] && reg_b[7:0] <= Y_POS[11:4])
 				begin
+					brch_amount = port_a_out[11:0];
+					pc_brch = 1;
 					pc_enable = 1;
-					wait_reset = 1;
+					delete_me = 1;
 				end
 				else
 				begin
-					wait_enable = 1;
+					pc_enable = 1;
 				end
 			end
-			
 			default:
 			begin
 				//default
@@ -369,7 +379,7 @@ module Control(
 			end
 			else if(pc_brch == 1'b1)
 			begin
-				pc <= pc - c;
+				pc <= pc - $signed(brch_amount);
 			end
 			else
 			begin
