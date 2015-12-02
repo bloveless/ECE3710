@@ -28,13 +28,15 @@ module ALU (
     output reg [15:0] c,
     output reg [4:0]  flags
     );
+	 reg [16:0] extendA;
+	 reg [16:0] extendOp;
 	 
 	 always @(a, b, opcode, carry_in)
 	 begin
 
 		// Always reset all the flags
 		flags[4:0] = 5'b00000;
-	 
+		
 		case(opcode[15:12])
 		
 			/*`TRAVEL: 
@@ -120,7 +122,9 @@ module ALU (
 			
 				// Add the number and the immediate with the carry_in
 				// Sumultaniously set the carry flag if necessary
-				{flags[`CARRY_FLAG], c} = $signed(a) + opcode[7:0] + carry_in;
+				extendA =$signed(a);
+				extendOp = $signed(opcode[7:0]);
+				{flags[`CARRY_FLAG], c} = extendA + extendOp +   $signed({1'b0,carry_in});
 				
 			end
 			
@@ -203,7 +207,7 @@ module ALU (
 					end
 				else flags[`LOW_FLAG] = 1'b0;
 				
-				if( a == {8'b0, opcode[7:0]} ) flags[`ZERO_FLAG] = 1'b1;
+				if( a >= {8'b0, opcode[7:0]} ) flags[`ZERO_FLAG] = 1'b1;
 				else flags[`ZERO_FLAG] = 1'b0;
 				
 				c = 16'b0000000000000000;

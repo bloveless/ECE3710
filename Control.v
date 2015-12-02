@@ -22,7 +22,7 @@
 
 module Control(
 		input reset_btn,
-		input in_clk,
+		input clk, //this was in_clk
 		output [6:0] seven_segment,
 		output [3:0] enable,
 		output [3:0] leds,
@@ -33,7 +33,9 @@ module Control(
 		output tft_display, 	//High to turn on backlight (Should always be high)	C15
 		output led_en,			//Screen brightness with PWM. Pulse 5 kHz for max brightness	C14
 		output tft_en,			//Set low for sleep state. Should always be high.	D14
-		output tft_de			//Set high for each row of pixels. Set low between rows.	A15
+		output tft_de		//Set high for each row of pixels. Set low between rows.	A15
+
+		
    );
 	
 	// Allow 16 bits so we can address peripherals
@@ -87,10 +89,10 @@ module Control(
 	reg [15:0] control_to_alu;
 	assign alu_in = alu_from_opcode_or_control ? port_a_out : control_to_alu;
 	
-	DCM dcm (
+	/*DCM dcm (
 		.CLK_IN1(in_clk),
 		.CLK_OUT1(clk)
-	);
+	);*/
 
 	Memory memory (
 		.port_a_address(pc_or_b),
@@ -186,9 +188,9 @@ module Control(
 				begin
 					state <= 7;
 				end
-				`BLT:
+				`BGE:
 					begin
-						if(saved_flags[`LOW_FLAG]== 0) state <= 8;
+						if(saved_flags[`ZERO_FLAG]== 1) state <= 8;
 						else state <=9;
 					end
 				default: //RTYPES and ITYPES
@@ -242,10 +244,18 @@ module Control(
 			2:	//RTYPE and ITYPE control lines set;
 			begin
 				//TODO: Set control lines for RTYPE and ITYPE instructions
+//disable write on CMPI
+				if(port_a_out[15:12] != `CMPI)
+				begin
 				pc_enable = 1;
 				write_enable = 1;
 				save_flags = 1;
-				
+				end
+				else
+				begin
+				pc_enable = 1;
+				save_flags=1;
+				end
 			end
 			
 			3: //JMP state
@@ -305,9 +315,9 @@ module Control(
 					//subtractionResult=$signed(pc);
 					pc_enable=1;
 					pc_brch=0;
-				   save_flags=1'b0;
+				   save_flags=1'b1;
 					
-					control_to_alu = {`SHIFTS, port_a_out[11:8],`EXT_LSHI_LEFT, 4'b0};
+					//control_to_alu = {`SHIFTS, port_a_out[11:8],`EXT_LSHI_LEFT, 4'b0};
 				end
 			9:
 				begin
@@ -325,8 +335,8 @@ module Control(
 					subtractionResult = subtractionPC_Reg - subtractionBranch_Reg;
 					//Cast back to unsigned and update PC, this will just 
 					//cut off the MSB off of the 17 bit subtraction reg
-					save_flags=1'b0;
-					control_to_alu = {`SHIFTS, port_a_out[11:8],`EXT_LSHI_LEFT, 4'b0};
+					save_flags=1'b1;
+					//control_to_alu = {`SHIFTS, port_a_out[11:8],`EXT_LSHI_LEFT, 4'b0};
 					
 					pc_enable=1;
 					pc_brch=1;
