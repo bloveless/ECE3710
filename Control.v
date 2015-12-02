@@ -176,8 +176,10 @@ module Control(
 		.clk(clk)
 	);
 	
+	reg delete_me = 0;
+	
 	BCD_To_7Seg bcd (
-		.binary({X_POS[11:4], Y_POS[11:4]}),
+		.binary(delete_me),
 		.clk(clk),
 		.seven_segment(seven_segment),
 		.enable(enable),
@@ -346,6 +348,7 @@ module Control(
 					brch_amount = port_a_out[11:0];
 					pc_brch = 1;
 					pc_enable = 1;
+					delete_me = 1;
 				end
 				else
 				begin
