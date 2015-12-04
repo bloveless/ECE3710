@@ -64,6 +64,8 @@
  
  `define TCHBRCH				4'b0110
 
+ `define WLS					4'b1010
+
  // Easy access to the flags
  `define CARRY_FLAG			0
  `define LOW_FLAG				1
