@@ -1,0 +1,35 @@
+.data
+
+	@file character.mem
+
+.text
+
+:begin
+	WLS 1
+	WAIT 1000
+	WLS 2
+	WAIT 1000
+	WLS 3
+	WAIT 1000
+	WLS 4
+	WAIT 1000
+	WLS 5
+	WAIT 1000
+	WLS 6
+	WAIT 1000
+	WLS 7
+	WAIT 1000
+	WLS 8
+	WAIT 1000
+	WLS 9
+	WAIT 1000
+	WLS 1
+	WAIT 250
+	WLS 2
+	WAIT 250
+	WLS 1
+	WAIT 250
+	WLS 2
+	WAIT 250
+	SETI $1 :begin
+	JMP $1

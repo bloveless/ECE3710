@@ -29,6 +29,7 @@ module Control(
 		output wire TP_CS, 
 		output wire TP_DCLK, 
 		output wire TP_DIN, 
+		output wire [7:0] wireless_data,
 		output wire [6:0] seven_segment,
 		output wire [3:0] enable,
 		output wire [3:0] leds,
@@ -42,10 +43,36 @@ module Control(
 		output wire tft_de			//Set high for each row of pixels. Set low between rows.	A15
    );
 	
+	assign wireless_data = wireless_data_out;
+	
 	// Allow 16 bits so we can address peripherals
 	// If the 16th bit is 1 we select from a peripheral
 	// If it is 0 we are reading from memory
 	reg [13:0] pc = 14'b11111111111111;
+	
+	// Send the same wireless command over and over again
+	reg[7:0] wireless_data_out = 8'd0;
+	
+	/*
+	integer cnt = 0;
+	
+	always @(posedge clk)
+	begin
+		cnt <= cnt + 1;
+		
+		if(cnt >= 36'd75000000)
+		begin
+			cnt <= 0;
+			wireless_data_out <= wireless_data_out + 1;
+			
+			if(wireless_data_out >= 10)
+			begin
+				wireless_data_out <= 0;
+			end
+		end
+	
+	end
+	*/
 	
    reg reset;
 	
@@ -203,14 +230,11 @@ module Control(
 	reg [11:0] milliseconds = 0;
 	reg wait_enable = 0;
 	reg wait_reset = 0;
+	reg [13:0] brch_amount = 0;
 	
 	always@(posedge clk)
 	begin
-		if(TP_PENIRQ==1'b0)
-		begin
-			state <=8;
-		end
-		else if(state == 0)			//Fetch
+		if(state == 0)			//Fetch
 		begin
 			state <= 1;
 		end
@@ -233,6 +257,14 @@ module Control(
 				begin
 					state <= 7;
 				end
+				`WLS:
+				begin
+					state <= 9;
+				end
+				`TCHBRCH:
+				begin
+					state <= 10;
+				end
 				default: //RTYPES and ITYPES
 				begin
 					state <= 2;
@@ -243,8 +275,11 @@ module Control(
 		else if(state == 4)
 		begin
 			state <= 5;
-			end
-		
+		end
+		else if(state == 10)
+		begin
+			state <= 11;
+		end
 		else
 		begin
 			state <= 0;
@@ -267,6 +302,7 @@ module Control(
 		save_flags = 0;
 		pc_jmp = 0;
 		pc_brch = 0;
+		brch_amount = 0;
 		wait_enable = 0;
 		wait_reset = 0;
 		
@@ -317,7 +353,7 @@ module Control(
 				pc_enable = 1;
 			end
 			
-			7:
+			7:	//WAIT
 			begin
 				if(milliseconds == port_a_out[11:0])
 				begin
@@ -329,22 +365,29 @@ module Control(
 					wait_enable = 1;
 				end
 			end
-			8: //Touchscreen Active
+			9: // wls
 			begin
-				pc_enable = 0;
-				alu_from_opcode_or_control = 0;
-				control_to_alu = {`ADDI, 4'd5, 8'hFF};
-				if(milliseconds == 12'b0010_0000_0000)
+				wireless_data_out = port_a_out[7:0];
+				pc_enable = 1;
+			end
+			10: //TOUCH BRANCH 1
+			begin
+				reg_read_a = 4'b1110;
+				reg_read_b = 4'b1111;
+			end
+			11:	//TOUCH BRANCH 2
+			begin
+				if(reg_a[15:8] >= X_POS[11:4] && reg_a[7:0] <= X_POS[11:4] && reg_b[15:8] >= Y_POS[11:4] && reg_b[7:0] <= Y_POS[11:4])
 				begin
+					brch_amount = port_a_out[11:0];
+					pc_brch = 1;
 					pc_enable = 1;
-					wait_reset = 1;
 				end
 				else
 				begin
-					wait_enable = 1;
+					pc_enable = 1;
 				end
 			end
-			
 			default:
 			begin
 				//default
@@ -369,7 +412,7 @@ module Control(
 			end
 			else if(pc_brch == 1'b1)
 			begin
-				pc <= pc - c;
+				pc <= pc - brch_amount;
 			end
 			else
 			begin
@@ -388,7 +431,7 @@ module Control(
 		end
 		else if(wait_enable == 1)
 		begin
-			if(wait_counter == 16'd33333)
+			if(wait_counter == 16'd25000)
 			begin
 				wait_counter <= 0;
 				milliseconds <= milliseconds + 1;
