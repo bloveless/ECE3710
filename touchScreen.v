@@ -36,7 +36,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-module touchScreen #(parameter CLOCKFREQ	=	75)
+module touchScreen #(parameter CLOCKFREQ	=	100)
 (
 input		wire							CLK_I,
 input		wire							RST_I,
