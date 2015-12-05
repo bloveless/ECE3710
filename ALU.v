@@ -114,6 +114,7 @@ module ALU (
 				// Add the number and the immediate with the carry_in
 				// Sumultaniously set the carry flag if necessary
 				{flags[`CARRY_FLAG], c} = $signed(a) + opcode[7:0] + carry_in;
+				if(c == 0) flags[`ZERO_FLAG] = 1'b1;
 				
 			end
 			

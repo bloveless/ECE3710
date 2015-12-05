@@ -92,6 +92,10 @@ module Control(
 				begin
 					state <= 7;
 				end
+				`BGE:
+				begin
+					state <= 8;
+				end
 				`TCHBRCH:
 				begin
 					state <= 10;
@@ -191,6 +195,19 @@ module Control(
 					wait_enable = 1;
 				end
 			end
+			8:
+			begin
+				if(saved_flags[`ZERO_FLAG] == 1'b1)
+				begin
+					pc_brch = 1;
+					brch_amount = port_a_out[11:0];
+					pc_enable = 1;
+				end
+				else
+				begin
+					pc_enable = 1;
+				end
+			end
 			10:	//TCHBRCH
 			begin
 				reg_read_a = 4'b1110;
@@ -234,7 +251,7 @@ module Control(
 			end
 			else
 			begin
-				pc <= pc - 15'b1;
+				pc <= pc - 14'b1;
 			end
 		end
 	end
@@ -249,7 +266,7 @@ module Control(
 		end
 		else if(wait_enable == 1)
 		begin
-			if(wait_counter == 16'd33333)
+			if(wait_counter == 16'd25000)
 			begin
 				wait_counter <= 0;
 				milliseconds <= milliseconds + 1;
