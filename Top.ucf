@@ -133,3 +133,21 @@ NET "TP_DCLK" LOC = D11;
 NET "TP_DIN" LOC = D6;
 NET "TP_DOUT" LOC = C6;
 NET "TP_PENIRQ" LOC = A3;
+
+NET "wireless_data[0]" IOSTANDARD = LVCMOS33;
+NET "wireless_data[1]" IOSTANDARD = LVCMOS33;
+NET "wireless_data[2]" IOSTANDARD = LVCMOS33;
+NET "wireless_data[3]" IOSTANDARD = LVCMOS33;
+NET "wireless_data[4]" IOSTANDARD = LVCMOS33;
+NET "wireless_data[5]" IOSTANDARD = LVCMOS33;
+NET "wireless_data[6]" IOSTANDARD = LVCMOS33;
+NET "wireless_data[7]" IOSTANDARD = LVCMOS33;
+
+NET "wireless_data[0]" LOC = T12;
+NET "wireless_data[1]" LOC = V12;
+NET "wireless_data[2]" LOC = N10;
+NET "wireless_data[3]" LOC = P11;
+NET "wireless_data[4]" LOC = M10;
+NET "wireless_data[5]" LOC = N9;
+NET "wireless_data[6]" LOC = U11;
+NET "wireless_data[7]" LOC = V11;

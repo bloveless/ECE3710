@@ -30,6 +30,7 @@ module Control(
 		input wire [11:0] X_POS,
 		input wire [11:0] Y_POS,
 		output reg [4:0] saved_flags,
+		output wire [7:0] wireless_data,
 		output wire [13:0] pc_or_b,
 		output wire [15:0] c_or_mem,
 		output wire [15:0] alu_in,
@@ -44,6 +45,10 @@ module Control(
 	// If the 16th bit is 1 we select from a peripheral
 	// If it is 0 we are reading from memory
 	reg [13:0] pc = 14'b11111111111111;
+	
+	// Send the same wireless command over and over again
+	reg[7:0] wireless_data_out = 8'd0;
+	assign wireless_data = wireless_data_out;
 	
 	//Mux Controls
 	reg c_or_mem_control;	//Mux control line
@@ -95,6 +100,10 @@ module Control(
 				`BGE:
 				begin
 					state <= 8;
+				end
+				`WLS:
+				begin
+					state <= 9;
 				end
 				`TCHBRCH:
 				begin
@@ -207,6 +216,11 @@ module Control(
 				begin
 					pc_enable = 1;
 				end
+			end
+			9: // wls
+			begin
+				wireless_data_out = port_a_out[7:0];
+				pc_enable = 1;
 			end
 			10:	//TCHBRCH
 			begin
