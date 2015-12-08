@@ -207,6 +207,11 @@ module ALU (
 				flags = 5'b00000;
 			end
 			
+			`BGE:
+			begin
+			
+			end
+			
 			default:
 			begin
 			

@@ -66,7 +66,7 @@
  
  `define BGE 					4'b0111
  
- `define WLS					4'b1010
+ `define WLS					4'b1111
 
  // Easy access to the flags
  `define CARRY_FLAG			0
