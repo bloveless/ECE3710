@@ -5,6 +5,17 @@
 	SETI $2 0
 	SETI $3 0
 	SETI $0 3
+	SETI $14 0xE8
+	LSH $14 8
+	ADDI $14 0x16
+	SETI $15 0xE5
+	LSH $15 8
+	ADDI $15 0x18
+	TCHBRCH :check_touch
+	JMP $0
+	
+:check_touch
+	WAIT 1
 	SETI $14 0x76
 	LSH $14 8
 	ADDI $14 0x16
