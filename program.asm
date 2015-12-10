@@ -112,6 +112,18 @@
 	JMP $0
 	
 :pane2_touch
+	SETI $14 0xE8
+	LSH $14 8
+	ADDI $14 0x16
+	SETI $15 0xE5
+	LSH $15 8
+	ADDI $15 0x18
+	TCHBRCH :chk_2
+	SETI $14 :pane2_touch
+	JMP $14
+
+:chk_2
+	WAIT 1
 	SETI $14 0x76
 	LSH $14 8
 	ADDI $14 0x16
