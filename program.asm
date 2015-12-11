@@ -5,6 +5,7 @@
 	SETI $2 0
 	SETI $3 0
 	SETI $0 3
+	WLS 0
 	SETI $14 0xE8
 	LSH $14 8
 	ADDI $14 0x16
@@ -112,6 +113,7 @@
 	JMP $0
 	
 :pane2_touch
+	WLS 0
 	SETI $14 0xE8
 	LSH $14 8
 	ADDI $14 0x16
